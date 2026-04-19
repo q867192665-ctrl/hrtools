@@ -638,15 +638,20 @@ class DataManager:
                 
                 signature_name = summary['签名图片']
                 if signature_name:
+                    print(f"[DEBUG] 查找签名: signature_name={signature_name}, signature_dir={signature_dir}, dir_exists={os.path.exists(signature_dir)}")
                     sig_file = None
                     if os.path.exists(signature_dir):
-                        for f in os.listdir(signature_dir):
+                        all_files = os.listdir(signature_dir)
+                        print(f"[DEBUG] 签名目录文件: {all_files[:10]}...")
+                        for f in all_files:
                             if f.startswith(signature_name + '.') and f.lower().endswith(('.png', '.jpg', '.jpeg')):
                                 sig_file = f
+                                print(f"[DEBUG] 找到签名文件: {sig_file}")
                                 break
                     
                     if sig_file:
                         img_path = os.path.join(signature_dir, sig_file)
+                        print(f"[DEBUG] 图片路径: {img_path}, exists={os.path.exists(img_path)}")
                         try:
                             img = XlImage(img_path)
                             img.width = 80
@@ -655,10 +660,14 @@ class DataManager:
                             cell_ref = f"{get_column_letter(sig_col)}{row_idx}"
                             ws.row_dimensions[row_idx].height = 35
                             ws.add_image(img, cell_ref)
+                            print(f"[DEBUG] 图片插入成功: {cell_ref}")
                         except Exception as e:
                             print(f"[WARN] 插入签名图片失败 {img_path}: {e}")
+                            import traceback
+                            traceback.print_exc()
                             ws.cell(row=row_idx, column=len(headers), value='已签名')
                     else:
+                        print(f"[DEBUG] 未找到签名文件: {signature_name}")
                         ws.cell(row=row_idx, column=len(headers), value='已签名')
             
             for col_idx in range(1, len(headers) + 1):
