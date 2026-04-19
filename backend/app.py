@@ -18,7 +18,53 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
 
-export_tasks = {}
+# 导出任务管理（数据库存储，支持多worker共享）
+def _get_export_task(task_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM export_tasks WHERE task_id = ?", (task_id,))
+    row = cursor.fetchone()
+    conn.close()
+    if not row:
+        return None
+    return {
+        'task_id': row['task_id'],
+        'status': row['status'],
+        'progress': row['progress'],
+        'total': row['total'],
+        'message': row['message'],
+        'file_path': row['file_path'],
+        'filename': row['filename'],
+        'error': row['error'],
+        'created_at': row['created_at']
+    }
+
+def _set_export_task(task_id, **kwargs):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    fields = []
+    values = []
+    for k, v in kwargs.items():
+        if k in ('status', 'progress', 'total', 'message', 'file_path', 'filename', 'error'):
+            fields.append(f"{k} = ?")
+            values.append(v)
+    if fields:
+        values.append(task_id)
+        cursor.execute(f"UPDATE export_tasks SET {', '.join(fields)} WHERE task_id = ?", values)
+        conn.commit()
+    conn.close()
+
+def _create_export_task(task_id, data):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO export_tasks (task_id, status, progress, total, message, file_path, filename, error, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        (task_id, data.get('status', 'pending'), data.get('progress', 0), data.get('total', 0),
+         data.get('message', ''), data.get('file_path'), data.get('filename'), data.get('error'),
+         data.get('created_at', datetime.now().isoformat()))
+    )
+    conn.commit()
+    conn.close()
 
 # 确保标准输出使用UTF-8编码
 if sys.platform == 'win32':
@@ -3160,7 +3206,7 @@ def start_export_task():
         
         task_id = str(uuid.uuid4())
         
-        export_tasks[task_id] = {
+        _create_export_task(task_id, {
             'status': 'pending',
             'progress': 0,
             'total': 0,
@@ -3169,7 +3215,7 @@ def start_export_task():
             'filename': None,
             'error': None,
             'created_at': datetime.now().isoformat()
-        }
+        })
         
         thread = threading.Thread(target=do_export_task, args=(task_id, search))
         thread.daemon = True
@@ -3184,10 +3230,10 @@ def start_export_task():
 @admin_required
 def get_export_progress(task_id):
     """获取导出任务进度"""
-    if task_id not in export_tasks:
+    task = _get_export_task(task_id)
+    if not task:
         return jsonify({'success': False, 'error': '任务不存在'}), 404
     
-    task = export_tasks[task_id]
     return jsonify({
         'success': True,
         'status': task['status'],
@@ -3204,10 +3250,9 @@ def get_export_progress(task_id):
 @admin_required
 def download_export_file(task_id):
     """下载导出的文件"""
-    if task_id not in export_tasks:
+    task = _get_export_task(task_id)
+    if not task:
         return jsonify({'success': False, 'error': '任务不存在'}), 404
-    
-    task = export_tasks[task_id]
     
     if task['status'] != 'completed':
         return jsonify({'success': False, 'error': '任务未完成'}), 400
@@ -3241,8 +3286,7 @@ def do_export_task(task_id, search):
         import zipfile
         from concurrent.futures import ThreadPoolExecutor, as_completed
         
-        export_tasks[task_id]['status'] = 'processing'
-        export_tasks[task_id]['message'] = '正在查询数据...'
+        _set_export_task(task_id, status='processing', message='正在查询数据...')
         
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -3262,12 +3306,10 @@ def do_export_task(task_id, search):
         conn.close()
         
         if not records:
-            export_tasks[task_id]['status'] = 'error'
-            export_tasks[task_id]['error'] = '没有客户数据可导出'
+            _set_export_task(task_id, status='error', error='没有客户数据可导出')
             return
         
-        export_tasks[task_id]['total'] = len(records)
-        export_tasks[task_id]['message'] = f'正在生成 {len(records)} 份文档...'
+        _set_export_task(task_id, total=len(records), message=f'正在生成 {len(records)} 份文档...')
         
         logo_path = os.path.join(os.path.dirname(__file__), '..', 'logo.png')
         if not os.path.exists(logo_path):
@@ -3526,8 +3568,7 @@ def do_export_task(task_id, search):
                 
                 with progress_lock:
                     completed_count[0] += 1
-                    export_tasks[task_id]['progress'] = completed_count[0]
-                    export_tasks[task_id]['message'] = f'正在生成文档 ({completed_count[0]}/{len(records)})...'
+                    _set_export_task(task_id, progress=completed_count[0], message=f'正在生成文档 ({completed_count[0]}/{len(records)})...')
                 
                 return (output_path, filename)
                     
@@ -3535,7 +3576,7 @@ def do_export_task(task_id, search):
                 print(f"处理记录 {idx + 1} 失败: {record_e}")
                 with progress_lock:
                     completed_count[0] += 1
-                    export_tasks[task_id]['progress'] = completed_count[0]
+                    _set_export_task(task_id, progress=completed_count[0])
                 return None
         
         tasks = [(idx, record, temp_dir, logo_path, task_id) for idx, record in enumerate(records)]
@@ -3551,18 +3592,14 @@ def do_export_task(task_id, search):
                     doc_files.append(result)
         
         if not doc_files:
-            export_tasks[task_id]['status'] = 'error'
-            export_tasks[task_id]['error'] = '没有成功生成任何文档'
+            _set_export_task(task_id, status='error', error='没有成功生成任何文档')
             return
         
-        export_tasks[task_id]['message'] = '正在打包文件...'
+        _set_export_task(task_id, message='正在打包文件...')
         
         if len(doc_files) == 1:
             output_path, output_filename = doc_files[0]
-            export_tasks[task_id]['status'] = 'completed'
-            export_tasks[task_id]['file_path'] = output_path
-            export_tasks[task_id]['filename'] = output_filename
-            export_tasks[task_id]['message'] = '导出完成，可以下载'
+            _set_export_task(task_id, status='completed', file_path=output_path, filename=output_filename, message='导出完成，可以下载')
         else:
             zip_filename = "客户档案表.zip"
             zip_path = os.path.join(output_dir, zip_filename)
@@ -3583,16 +3620,12 @@ def do_export_task(task_id, search):
             except:
                 pass
             
-            export_tasks[task_id]['status'] = 'completed'
-            export_tasks[task_id]['file_path'] = zip_path
-            export_tasks[task_id]['filename'] = zip_filename
-            export_tasks[task_id]['message'] = '导出完成，可以下载'
+            _set_export_task(task_id, status='completed', file_path=zip_path, filename=zip_filename, message='导出完成，可以下载')
         
     except Exception as e:
         import traceback
         traceback.print_exc()
-        export_tasks[task_id]['status'] = 'error'
-        export_tasks[task_id]['error'] = f'导出失败: {str(e)}'
+        _set_export_task(task_id, status='error', error=f'导出失败: {str(e)}')
 
 
 @app.route('/api/admin/customer/export-word', methods=['GET'])

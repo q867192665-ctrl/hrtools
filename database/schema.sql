@@ -340,7 +340,24 @@ CREATE INDEX IF NOT EXISTS idx_customer_name ON customer_archive(联系人);
 CREATE INDEX IF NOT EXISTS idx_customer_id ON customer_archive(档案编号);
 
 -- ========================================
--- 9. 设备绑定表 (device_bindings)
+-- 9. 导出任务表 (export_tasks)
+-- 用途：异步导出任务状态管理（支持多worker共享）
+-- ========================================
+
+CREATE TABLE IF NOT EXISTS export_tasks (
+    task_id TEXT PRIMARY KEY,
+    status TEXT CHECK(status IN ('pending', 'processing', 'completed', 'error')) DEFAULT 'pending',
+    progress INTEGER DEFAULT 0,
+    total INTEGER DEFAULT 0,
+    message TEXT,
+    file_path TEXT,
+    filename TEXT,
+    error TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ========================================
+-- 10. 设备绑定表 (device_bindings)
 -- 用途：用户设备绑定管理
 -- 说明：一个账号只能绑定一个设备
 -- ========================================
