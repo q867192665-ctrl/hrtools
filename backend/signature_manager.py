@@ -188,24 +188,29 @@ class SignatureManager:
             cursor = conn.cursor()
             
             cursor.execute(
-                "SELECT 序号, 部门, 入职日期 FROM salary_table WHERE 姓名 = ? LIMIT 1",
+                "SELECT 序号, 部门, 入职日期, 岗位 FROM salary_table WHERE 姓名 = ? LIMIT 1",
                 (user_name,)
             )
             user_info = cursor.fetchone()
             
+            serial_no = 'SIG'
+            department = '待分配'
+            hire_date = '2024-01-01'
+            position = ''
+            
             if user_info:
-                serial_no = user_info['序号'] if user_info else 'SIG'
-                department = user_info['部门'] if user_info else '待分配'
-                hire_date = user_info['入职日期'] if user_info else '2024-01-01'
+                serial_no = user_info['序号'] or 'SIG'
+                department = user_info['部门'] or '待分配'
+                hire_date = user_info['入职日期'] or '2024-01-01'
+                position = user_info['岗位'] or ''
             else:
                 cursor.execute(
                     "SELECT 部门 FROM users WHERE 姓名 = ?",
                     (user_name,)
                 )
                 user_row = cursor.fetchone()
-                serial_no = 'SIG'
-                department = user_row['部门'] if user_row else '待分配'
-                hire_date = '2024-01-01'
+                if user_row:
+                    department = user_row['部门'] or '待分配'
             
             if month:
                 cursor.execute(
@@ -229,9 +234,9 @@ class SignatureManager:
                 else:
                     cursor.execute(
                         """INSERT INTO summary_table 
-                           (序号, 部门, 姓名, 入职日期, 月份, 签收状态, 最新签收时间, 签收方式, 签名图片)
-                           VALUES (?, ?, ?, ?, ?, '已签收', ?, '电子签名', ?)""",
-                        (serial_no, department, user_name, hire_date, month, datetime.now(), file_id)
+                           (序号, 部门, 姓名, 岗位, 入职日期, 月份, 签收状态, 最新签收时间, 签收方式, 签名图片)
+                           VALUES (?, ?, ?, ?, ?, ?, '已签收', ?, '电子签名', ?)""",
+                        (serial_no, department, user_name, position, hire_date, month, datetime.now(), file_id)
                     )
             else:
                 cursor.execute(
@@ -255,9 +260,9 @@ class SignatureManager:
                 else:
                     cursor.execute(
                         """INSERT INTO summary_table 
-                           (序号, 部门, 姓名, 入职日期, 签收状态, 最新签收时间, 签收方式, 签名图片)
-                           VALUES (?, ?, ?, ?, '已签收', ?, '电子签名', ?)""",
-                        (serial_no, department, user_name, hire_date, datetime.now(), file_id)
+                           (序号, 部门, 姓名, 岗位, 入职日期, 签收状态, 最新签收时间, 签收方式, 签名图片)
+                           VALUES (?, ?, ?, ?, ?, '已签收', ?, '电子签名', ?)""",
+                        (serial_no, department, user_name, position, hire_date, datetime.now(), file_id)
                     )
             
             conn.commit()

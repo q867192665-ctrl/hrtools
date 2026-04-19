@@ -101,6 +101,7 @@ CREATE TABLE IF NOT EXISTS summary_table (
     序号 TEXT,
     部门 TEXT,
     姓名 TEXT NOT NULL,
+    岗位 TEXT,
     手机号 TEXT,
     
     -- 日期类
