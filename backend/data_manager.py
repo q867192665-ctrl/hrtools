@@ -638,12 +638,15 @@ class DataManager:
                 
                 signature_name = summary['签名图片']
                 if signature_name:
-                    signature_files = [f for f in os.listdir(signature_dir) if f.startswith(signature_name + '.') or f == signature_name] if os.path.exists(signature_dir) else []
-                    if not signature_files:
-                        signature_files = [f for f in os.listdir(signature_dir) if signature_name in f] if os.path.exists(signature_dir) else []
+                    sig_file = None
+                    if os.path.exists(signature_dir):
+                        for f in os.listdir(signature_dir):
+                            if f.startswith(signature_name + '.') and f.lower().endswith(('.png', '.jpg', '.jpeg')):
+                                sig_file = f
+                                break
                     
-                    if signature_files:
-                        img_path = os.path.join(signature_dir, signature_files[-1])
+                    if sig_file:
+                        img_path = os.path.join(signature_dir, sig_file)
                         try:
                             img = XlImage(img_path)
                             img.width = 80
@@ -654,9 +657,9 @@ class DataManager:
                             ws.add_image(img, cell_ref)
                         except Exception as e:
                             print(f"[WARN] 插入签名图片失败 {img_path}: {e}")
-                            ws.cell(row=row_idx, column=len(headers), value=signature_name)
+                            ws.cell(row=row_idx, column=len(headers), value='已签名')
                     else:
-                        ws.cell(row=row_idx, column=len(headers), value=signature_name)
+                        ws.cell(row=row_idx, column=len(headers), value='已签名')
             
             for col_idx in range(1, len(headers) + 1):
                 max_length = max(
