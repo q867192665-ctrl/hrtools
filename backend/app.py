@@ -3440,22 +3440,53 @@ def do_export_task(task_id, search):
                 ], space_before=10.35, left_indent=0.05)
                 
                 add_content_para([
-                    ("身份证号：", False), (get_field(record, '身份证'), True)
-                ], space_before=10.35, left_indent=0.05)
+                    ("身份证号：", False), (get_field(record, '身份证'), True),
+                    ("          家庭电话(老人电话):", False), (get_field(record, '联系电话'), True)
+                ], space_before=9.4, left_indent=0.05)
                 
                 add_content_para([
-                    ("联系电话：", False), (get_field(record, '联系电话'), True),
-                    ("             现住址：", False), (get_field(record, '现住址'), True)
-                ], space_before=10.35, left_indent=0.05)
+                    ("现住址：", False), (get_field(record, '现住址'), True),
+                    ("                   医保类型:", False), (get_field(record, '客户类型'), True)
+                ], space_before=9.4, left_indent=0.05)
                 
                 add_content_para([
-                    ("评估日期：", False), (format_date_only(get_field(record, '评估日期')), True),
-                    ("             评估等级：", False), (get_field(record, '评估等级'), True)
-                ], space_before=10.35, left_indent=0.05)
+                    ("自述身高：", False), (get_field(record, '自述身高'), True),
+                    ("CM    自述体重：", False), (get_field(record, '自述体重'), True),
+                    ("KG   紧急联系电话：", False), (get_field(record, '紧急联系电话'), True)
+                ], space_before=3.75)
+                
+                add_content_para([("居住情况：", False), (get_field(record, '居住情况'), True)], space_before=8.8, left_indent=0.06)
+                add_content_para([("慢性疾病：", False), (get_field(record, '慢性疾病'), True)], space_before=8.8, left_indent=0.06)
+                add_content_para([("使用药物：", False), (get_field(record, '使用药物'), True)], space_before=8.8)
+                
+                add_content_para([("意识：", False), (get_field(record, '意识'), True)], space_before=8.8)
+                add_content_para([("生命体征：", False), (get_field(record, '生命体征'), True)], space_before=8.8)
+                
+                add_content_para([("四肢活动情况：", False), (get_field(record, '四肢活动情况'), True)], space_before=11.2)
                 
                 add_content_para([
-                    ("病史摘要：", False), (get_field(record, '病史摘要'), True)
-                ], space_before=14.0, left_indent=0.19)
+                    ("现在有无压疮：", False), (get_field(record, '现在有无压疮'), True),
+                    ("                 部位：", False), (get_field(record, '部位'), True)
+                ], space_before=12.3, left_indent=0.2)
+                
+                add_content_para([
+                    ("压疮危险度评估：", False), (get_field(record, '压疮危险度评估'), True),
+                    ("    分", False),
+                    ("（(Braden评分<18分，提示有发生压疮的风险）", False)
+                ], space_before=14.6, first_line_indent=2.45)
+                
+                add_content_para([
+                    ("日常生活活动能力评估（ADI总分）：", False), (get_field(record, '日常生活活动能力评估'), True),
+                    ("     分", False)
+                ], space_before=3.0, first_line_indent=2.45)
+                
+                add_content_para([
+                    ("跌倒/坠床风险评估(如果正常分数为0)：", False), (get_field(record, '跌倒坠床风险评估'), True),
+                    ("   分", False),
+                    ("（3分以上有跌倒风险）", False)
+                ], space_before=3.0, first_line_indent=2.45)
+                
+                add_content_para([("生活自理能力：", False), (get_field(record, '生活自理能力'), True)], space_before=13.7)
                 
                 add_content_para([
                     ("护理计划起始时间：", False), (format_date_only(get_field(record, '护理计划起始时间')), True),
@@ -3510,7 +3541,7 @@ def do_export_task(task_id, search):
         tasks = [(idx, record, temp_dir, logo_path, task_id) for idx, record in enumerate(records)]
         
         doc_files = []
-        max_workers = min(16, len(records))
+        max_workers = min(os.cpu_count() or 4, len(records))
         
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             futures = [executor.submit(generate_single_doc, task) for task in tasks]
