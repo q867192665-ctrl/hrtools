@@ -37,8 +37,7 @@ CREATE TABLE IF NOT EXISTS salary_table (
     -- 薪资类（数字类型，保留2位小数）
     基本工资底薪 DECIMAL(10,2) CHECK (基本工资底薪 >= 0),
     基本工资绩效 DECIMAL(10,2) CHECK (基本工资绩效 >= 0),
-    基本工资其它补贴 DECIMAL(10,2) CHECK (基本工资其它补贴 >= 0),root@homeassistant:/ # docker-compose pull && docker-compose up -d
-no configuration file provided: not found
+    基本工资其它补贴 DECIMAL(10,2) CHECK (基本工资其它补贴 >= 0),
     基本工资合计 DECIMAL(10,2) CHECK (基本工资合计 >= 0),
     岗位工资 DECIMAL(10,2) CHECK (岗位工资 >= 0),
     护理员绩效工资 DECIMAL(10,2) CHECK (护理员绩效工资 >= 0),
