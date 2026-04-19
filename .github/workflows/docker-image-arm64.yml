@@ -12,7 +12,7 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     steps:
@@ -37,7 +37,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Build Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -49,3 +49,50 @@ jobs:
           tags: |
             ${{ env.REGISTRY }}/${{ github.repository }}:latest
             ${{ env.REGISTRY }}/${{ github.repository }}:${{ github.sha }}
+
+      - name: Export Docker image to tar
+        run: |
+          docker pull ${{ env.REGISTRY }}/${{ github.repository }}:latest
+          docker save ${{ env.REGISTRY }}/${{ github.repository }}:latest -o hrtools-arm64.tar
+          gzip hrtools-arm64.tar
+          echo "IMAGE_FILE=hrtools-arm64.tar.gz" >> $GITHUB_ENV
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hrtools-arm64-image
+          path: hrtools-arm64.tar.gz
+          retention-days: 90
+
+      - name: Create Release
+        if: github.event_name == 'workflow_dispatch'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ github.run_number }}
+          name: Release ${{ github.run_number }}
+          files: hrtools-arm64.tar.gz
+          body: |
+            ## 人事管理系统 Docker 镜像
+            
+            ### 下载说明
+            - 下载 `hrtools-arm64.tar.gz` 文件
+            - 使用以下命令导入镜像：
+              ```bash
+              gunzip hrtools-arm64.tar.gz
+              docker load -i hrtools-arm64.tar
+              ```
+            - 运行容器：
+              ```bash
+              docker run -d --name salary_system --restart unless-stopped \
+                -p 32996:32996 \
+                -v salary_data:/app/database \
+                -v salary_signatures:/app/backend/signatures \
+                -v salary_exports:/app/backend/exports \
+                ghcr.io/q867192665-ctrl/hrtools:latest
+              ```
+            
+            ### 默认账号
+            - 管理员: admin / admin123
+            - 普通用户: 示例用户密码为 123456
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
