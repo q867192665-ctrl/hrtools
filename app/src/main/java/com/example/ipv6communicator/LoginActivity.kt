@@ -132,6 +132,8 @@ class LoginActivity : AppCompatActivity() {
                     apply()
                 }
 
+                UpdateChecker.checkForUpdate(this@LoginActivity)
+
                 val intent = Intent(this@LoginActivity, MenuActivity::class.java)
                 startActivity(intent)
                 finish()

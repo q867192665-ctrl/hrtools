@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,65 +16,58 @@ object UpdateChecker {
 
     private val client = OkHttpClient()
     private const val BASE_URL = "http://yaohu.dynv6.net:32996"
+    private var hasCheckedThisSession = false
 
-    fun checkForUpdate(context: androidx.appcompat.app.AppCompatActivity) {
-        context.lifecycleScope.launch {
-            val result = checkVersion()
-            withContext(Dispatchers.Main) {
-                if (result != null && result.needUpdate) {
-                    showUpdateDialog(context, result)
-                }
-            }
-        }
-    }
+    fun checkForUpdate(context: Context) {
+        if (hasCheckedThisSession) return
+        hasCheckedThisSession = true
 
-    private suspend fun checkVersion(): UpdateInfo? {
-        return withContext(Dispatchers.IO) {
-            try {
-                val request = Request.Builder()
-                    .url("$BASE_URL/api/app/version")
-                    .get()
-                    .build()
+        val request = Request.Builder()
+            .url("$BASE_URL/api/app/version")
+            .get()
+            .build()
 
-                val response = client.newCall(request).execute()
+        client.newCall(request).enqueue(object : okhttp3.Callback {
+            override fun onFailure(call: okhttp3.Call, e: java.io.IOException) {}
+
+            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
                 if (response.isSuccessful) {
                     val body = response.body?.string()
                     if (body != null) {
-                        val json = JSONObject(body)
-                        if (json.getBoolean("success")) {
-                            UpdateInfo(
-                                versionCode = json.getInt("version_code"),
-                                versionName = json.getString("version_name"),
-                                downloadUrl = json.getString("download_url"),
-                                updateMessage = json.getString("update_message")
-                            )
-                        } else null
-                    } else null
-                } else null
-            } catch (e: Exception) {
-                null
+                        try {
+                            val json = JSONObject(body)
+                            if (json.getBoolean("success")) {
+                                val versionCode = json.getInt("version_code")
+                                val versionName = json.getString("version_name")
+                                val downloadUrl = json.getString("download_url")
+                                val updateMessage = json.getString("update_message")
+
+                                android.os.Handler(android.os.Looper.getMainLooper()).post {
+                                    showUpdateDialog(context, versionName, downloadUrl, updateMessage)
+                                }
+                            }
+                        } catch (e: Exception) {}
+                    }
+                }
             }
-        }
+        })
     }
 
-    private fun showUpdateDialog(context: androidx.appcompat.app.AppCompatActivity, info: UpdateInfo) {
-        AlertDialog.Builder(context)
-            .setTitle("发现新版本 ${info.versionName}")
-            .setMessage(info.updateMessage)
+    private fun showUpdateDialog(context: Context, versionName: String, downloadUrl: String, updateMessage: String) {
+        val dialog = AlertDialog.Builder(context)
+            .setTitle("发现新版本 $versionName")
+            .setMessage(updateMessage)
             .setPositiveButton("立即下载") { _, _ ->
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(info.downloadUrl))
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(downloadUrl))
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(intent)
             }
             .setNegativeButton("稍后再说", null)
             .setCancelable(false)
-            .show()
-    }
+            .create()
 
-    data class UpdateInfo(
-        val versionCode: Int,
-        val versionName: String,
-        val downloadUrl: String,
-        val updateMessage: String,
-        val needUpdate: Boolean = true
-    )
+        if (context is android.app.Activity && !context.isFinishing && !context.isDestroyed) {
+            dialog.show()
+        }
+    }
 }
