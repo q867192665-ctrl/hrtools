@@ -195,25 +195,33 @@ class AuthManager:
             bool: 是否成功
         """
         conn = None
-        try:
-            conn = self.get_db_connection()
-            cursor = conn.cursor()
-            
-            cursor.execute(
-                "UPDATE users SET token = NULL, token_expire_time = NULL WHERE 姓名 = ?",
-                (name,)
-            )
-            
-            conn.commit()
-            
-            return True
-            
-        except Exception as e:
-            print(f"登出失败: {e}")
-            return False
-        finally:
-            if conn:
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                conn = self.get_db_connection()
+                cursor = conn.cursor()
+                
+                cursor.execute(
+                    "UPDATE users SET token = NULL, token_expire_time = NULL WHERE 姓名 = ?",
+                    (name,)
+                )
+                
+                conn.commit()
                 conn.close()
+                return True
+                
+            except Exception as e:
+                print(f"登出失败 (尝试 {attempt + 1}/{max_retries}): {e}")
+                if conn:
+                    try:
+                        conn.close()
+                    except:
+                        pass
+                if attempt < max_retries - 1:
+                    import time
+                    time.sleep(0.5)
+        
+        return False
     
     def change_password(self, name, old_password, new_password):
         """
