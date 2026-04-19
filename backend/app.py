@@ -3332,6 +3332,11 @@ def do_export_task(task_id, search):
         def generate_single_doc(args):
             idx, record, temp_dir, logo_path, task_id = args
             try:
+                from docx import Document
+                from docx.shared import Cm, Pt
+                from docx.enum.text import WD_ALIGN_PARAGRAPH
+                from docx.oxml.ns import qn
+                
                 doc = Document()
                 
                 section = doc.sections[0]
@@ -3347,9 +3352,28 @@ def do_export_task(task_id, search):
                 para0.paragraph_format.space_before = Pt(4.25)
                 para0.paragraph_format.line_spacing = 0.8
                 run0 = para0.add_run("编号：")
-                set_run_font(run0, font_size=14, bold=True)
+                run0.font.name = '黑体'
+                run0.font.size = Pt(14)
+                run0.font.bold = True
+                try:
+                    r = run0._element
+                    rPr = r.get_or_add_rPr()
+                    rFonts = rPr.get_or_add_rFonts()
+                    rFonts.set(qn('w:eastAsia'), '黑体')
+                except:
+                    pass
                 run0_val = para0.add_run(get_field(record, '档案编号'))
-                set_run_font(run0_val, font_size=14, bold=True, underline=True)
+                run0_val.font.name = '黑体'
+                run0_val.font.size = Pt(14)
+                run0_val.font.bold = True
+                run0_val.font.underline = True
+                try:
+                    r = run0_val._element
+                    rPr = r.get_or_add_rPr()
+                    rFonts = rPr.get_or_add_rFonts()
+                    rFonts.set(qn('w:eastAsia'), '黑体')
+                except:
+                    pass
                 
                 if logo_path:
                     try:
@@ -3360,15 +3384,22 @@ def do_export_task(task_id, search):
                         img_run.add_picture(logo_path, width=Cm(4.37), height=Cm(1.28))
                     except Exception as e:
                         print(f"异步导出-插入图片失败: {e}")
-                        import traceback
-                        traceback.print_exc()
                 
                 para2 = doc.add_paragraph()
                 para2.alignment = WD_ALIGN_PARAGRAPH.CENTER
                 para2.paragraph_format.space_before = Pt(6.25)
                 para2.paragraph_format.line_spacing = 0.8
                 run2 = para2.add_run('长护险客户基本信息及护理计划')
-                set_run_font(run2, font_size=16, bold=True)
+                run2.font.name = '黑体'
+                run2.font.size = Pt(16)
+                run2.font.bold = True
+                try:
+                    r = run2._element
+                    rPr = r.get_or_add_rPr()
+                    rFonts = rPr.get_or_add_rFonts()
+                    rFonts.set(qn('w:eastAsia'), '黑体')
+                except:
+                    pass
                 
                 para3 = doc.add_paragraph()
                 para3.paragraph_format.line_spacing = 1.62
@@ -3383,7 +3414,17 @@ def do_export_task(task_id, search):
                         para.paragraph_format.first_line_indent = Cm(first_line_indent)
                     for text, is_underline in parts:
                         run = para.add_run(text)
-                        set_run_font(run, underline=is_underline)
+                        run.font.name = '黑体'
+                        run.font.size = Pt(11)
+                        run.font.bold = True
+                        run.font.underline = is_underline
+                        try:
+                            r = run._element
+                            rPr = r.get_or_add_rPr()
+                            rFonts = rPr.get_or_add_rFonts()
+                            rFonts.set(qn('w:eastAsia'), '黑体')
+                        except:
+                            pass
                     return para
                 
                 add_content_para([
@@ -3399,53 +3440,22 @@ def do_export_task(task_id, search):
                 ], space_before=10.35, left_indent=0.05)
                 
                 add_content_para([
-                    ("身份证号：", False), (get_field(record, '身份证'), True),
-                    ("          家庭电话(老人电话):", False), (get_field(record, '联系电话'), True)
-                ], space_before=9.4, left_indent=0.05)
+                    ("身份证号：", False), (get_field(record, '身份证'), True)
+                ], space_before=10.35, left_indent=0.05)
                 
                 add_content_para([
-                    ("现住址：", False), (get_field(record, '现住址'), True),
-                    ("                   医保类型:", False), (get_field(record, '客户类型'), True)
-                ], space_before=9.4, left_indent=0.05)
+                    ("联系电话：", False), (get_field(record, '联系电话'), True),
+                    ("             现住址：", False), (get_field(record, '现住址'), True)
+                ], space_before=10.35, left_indent=0.05)
                 
                 add_content_para([
-                    ("自述身高：", False), (get_field(record, '自述身高'), True),
-                    ("CM    自述体重：", False), (get_field(record, '自述体重'), True),
-                    ("KG   紧急联系电话：", False), (get_field(record, '紧急联系电话'), True)
-                ], space_before=3.75)
-                
-                add_content_para([("居住情况：", False), (get_field(record, '居住情况'), True)], space_before=8.8, left_indent=0.06)
-                add_content_para([("慢性疾病：", False), (get_field(record, '慢性疾病'), True)], space_before=8.8, left_indent=0.06)
-                add_content_para([("使用药物：", False), (get_field(record, '使用药物'), True)], space_before=8.8)
-                
-                add_content_para([("意识：", False), (get_field(record, '意识'), True)], space_before=8.8)
-                add_content_para([("生命体征：", False), (get_field(record, '生命体征'), True)], space_before=8.8)
-                
-                add_content_para([("四肢活动情况：", False), (get_field(record, '四肢活动情况'), True)], space_before=11.2)
+                    ("评估日期：", False), (format_date_only(get_field(record, '评估日期')), True),
+                    ("             评估等级：", False), (get_field(record, '评估等级'), True)
+                ], space_before=10.35, left_indent=0.05)
                 
                 add_content_para([
-                    ("现在有无压疮：", False), (get_field(record, '现在有无压疮'), True),
-                    ("                 部位：", False), (get_field(record, '部位'), True)
-                ], space_before=12.3, left_indent=0.2)
-                
-                add_content_para([
-                    ("压疮危险度评估：", False), (get_field(record, '压疮危险度评估'), True),
-                    ("    分", False),
-                    ("（(Braden评分<18分，提示有发生压疮的风险）", False)
-                ], space_before=14.6, first_line_indent=2.45)
-                
-                add_content_para([
-                    ("日常生活活动能力评估（ADI总分）：", False), (get_field(record, '日常生活活动能力评估'), True),
-                    ("     分", False)
-                ], space_before=3.0, first_line_indent=2.45)
-                
-                add_content_para([
-                    ("跌倒/坠床风险评估(如果正常分数为0)：", False), (get_field(record, '跌倒坠床风险评估'), True),
-                    ("   分", False),
-                    ("（3分以上有跌倒风险）", False)
-                ], space_before=3.0, first_line_indent=2.45)
-                
-                add_content_para([("生活自理能力：", False), (get_field(record, '生活自理能力'), True)], space_before=13.7)
+                    ("病史摘要：", False), (get_field(record, '病史摘要'), True)
+                ], space_before=14.0, left_indent=0.19)
                 
                 add_content_para([
                     ("护理计划起始时间：", False), (format_date_only(get_field(record, '护理计划起始时间')), True),
@@ -3462,7 +3472,16 @@ def do_export_task(task_id, search):
                 para_end2.paragraph_format.left_indent = Cm(0.64)
                 para_end2.paragraph_format.line_spacing = 0.96
                 run_end = para_end2.add_run("护士/评估者签字：                      客户或家属签字：")
-                set_run_font(run_end)
+                run_end.font.name = '黑体'
+                run_end.font.size = Pt(11)
+                run_end.font.bold = True
+                try:
+                    r = run_end._element
+                    rPr = r.get_or_add_rPr()
+                    rFonts = rPr.get_or_add_rFonts()
+                    rFonts.set(qn('w:eastAsia'), '黑体')
+                except:
+                    pass
                 
                 name = get_field(record, '联系人') or '未知'
                 number = get_field(record, '档案编号')
