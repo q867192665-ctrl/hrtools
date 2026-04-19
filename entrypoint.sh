@@ -102,6 +102,17 @@ required_tables = {
         密码 TEXT, 手机号 TEXT, 部门 TEXT, 入职日期 DATE, role TEXT DEFAULT 'user',
         token TEXT, token_expire_time TIMESTAMP, last_login_time TIMESTAMP,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )''',
+    'export_tasks': '''CREATE TABLE IF NOT EXISTS export_tasks (
+        task_id TEXT PRIMARY KEY,
+        status TEXT CHECK(status IN ('pending', 'processing', 'completed', 'error')) DEFAULT 'pending',
+        progress INTEGER DEFAULT 0,
+        total INTEGER DEFAULT 0,
+        message TEXT,
+        file_path TEXT,
+        filename TEXT,
+        error TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )'''
 }
 
