@@ -27,6 +27,7 @@ COPY backend/signature_manager.py /app/backend/signature_manager.py
 COPY backend/data_manager.py /app/backend/data_manager.py
 COPY backend/device_manager.py /app/backend/device_manager.py
 COPY backend/templates/ /app/backend/templates/
+COPY logo.png /app/logo.png
 
 COPY database/schema.sql /app/database/schema.sql
 COPY database/init_database.py /app/database/init_database.py
