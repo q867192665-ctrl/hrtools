@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件上传测试</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        input[type="text"], input[type="file"] {
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 12px 20px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>1. 登录获取Token</h2>
+        <input type="text" id="username" placeholder="用户名" value="admin">
+        <input type="text" id="password" placeholder="密码" value="admin123">
+        <button onclick="login()">登录</button>
+        <div id="loginResult" class="result info" style="display:none;"></div>
+    </div>
+
+    <div class="card">
+        <h2>2. 上传工资表文件</h2>
+        <p>Token: <span id="tokenDisplay">未登录</span></p>
+        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv">
+        <button onclick="uploadFile()">上传文件</button>
+        <div id="uploadResult" class="result" style="display:none;"></div>
+    </div>
+
+    <div class="card">
+        <h2>3. 测试其他API</h2>
+        <button onclick="testUsers()">获取用户列表</button>
+        <button onclick="testStatistics()">获取统计信息</button>
+        <div id="apiResult" class="result info" style="display:none;"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000';
+        let token = '';
+
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const resultDiv = document.getElementById('loginResult');
+            
+            try {
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result info';
+                resultDiv.textContent = '登录中...';
+
+                const response = await fetch(`${API_BASE}/api/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: username, password: password })
+                });
+
+                const data = await response.json();
+                console.log('登录响应:', data);
+
+                if (data.success) {
+                    token = data.token;
+                    document.getElementById('tokenDisplay').textContent = token.substring(0, 30) + '...';
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = '登录成功!\nToken: ' + token;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = '登录失败: ' + data.error;
+                }
+            } catch (e) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '请求失败: ' + e.message;
+            }
+        }
+
+        async function uploadFile() {
+            if (!token) {
+                alert('请先登录获取Token');
+                return;
+            }
+
+            const fileInput = document.getElementById('fileInput');
+            const resultDiv = document.getElementById('uploadResult');
+            
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert('请选择文件');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            console.log('选择的文件:', file.name, file.type, file.size);
+
+            try {
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result info';
+                resultDiv.textContent = '上传中...';
+
+                const formData = new FormData();
+                formData.append('file', file);
+
+                console.log('发送请求...');
+                console.log('Token:', token);
+
+                const response = await fetch(`${API_BASE}/api/admin/upload-salary`, {
+                    method: 'POST',
+                    headers: { 'Authorization': token },
+                    body: formData
+                });
+
+                console.log('响应状态:', response.status);
+                const data = await response.json();
+                console.log('响应数据:', data);
+
+                if (data.success) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = '上传成功!\n' + JSON.stringify(data, null, 2);
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = '上传失败: ' + data.error + '\n\n完整响应:\n' + JSON.stringify(data, null, 2);
+                }
+            } catch (e) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '请求失败: ' + e.message;
+                console.error('错误:', e);
+            }
+        }
+
+        async function testUsers() {
+            if (!token) {
+                alert('请先登录获取Token');
+                return;
+            }
+
+            const resultDiv = document.getElementById('apiResult');
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/users`, {
+                    headers: { 'Authorization': token }
+                });
+                const data = await response.json();
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result success';
+                resultDiv.textContent = '用户列表:\n' + JSON.stringify(data, null, 2);
+            } catch (e) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '请求失败: ' + e.message;
+            }
+        }
+
+        async function testStatistics() {
+            if (!token) {
+                alert('请先登录获取Token');
+                return;
+            }
+
+            const resultDiv = document.getElementById('apiResult');
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/statistics`, {
+                    headers: { 'Authorization': token }
+                });
+                const data = await response.json();
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result success';
+                resultDiv.textContent = '统计信息:\n' + JSON.stringify(data, null, 2);
+            } catch (e) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '请求失败: ' + e.message;
+            }
+        }
+    </script>
+</body>
+</html>

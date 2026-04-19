@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人事管理系统 - 人员管理</title>
+    <style>
+        :root {
+            --bg-primary: #F5F7FA;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #EEF2F7;
+            --accent-primary: #1E88E5;
+            --accent-hover: #1976D2;
+            --accent-light: #E3F2FD;
+            --text-primary: #212121;
+            --text-secondary: #616161;
+            --text-tertiary: #9E9E9E;
+            --text-muted: #BDBDBD;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --error: #F44336;
+            --info: #2196F3;
+            --border-primary: #E0E0E0;
+            --border-secondary: #EEEEEE;
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 20px;
+            --space-6: 24px;
+            --space-8: 32px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            color: var(--text-primary);
+        }
+        
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-primary);
+            padding: 0 var(--space-6);
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .header-title .logo {
+            width: 32px;
+            height: 32px;
+            background: var(--accent-primary);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+        
+        .header-right span {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .btn {
+            padding: var(--space-2) var(--space-4);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-primary {
+            background: var(--accent-primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            box-shadow: 0 2px 8px rgba(30, 136, 229, 0.3);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-primary);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: var(--error);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #E53935;
+        }
+        
+        .btn-sm {
+            padding: var(--space-1) var(--space-3);
+            font-size: 12px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--space-6);
+        }
+        
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        
+        .card-header {
+            padding: var(--space-5);
+            border-bottom: 1px solid var(--border-secondary);
+        }
+        
+        .card-body {
+            padding: 0;
+        }
+        
+        .actions-bar {
+            display: flex;
+            gap: var(--space-3);
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .search-box {
+            padding: 10px 14px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-primary);
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+            color: var(--text-primary);
+            width: 220px;
+            transition: all 0.2s ease;
+        }
+        
+        .search-box::placeholder {
+            color: var(--text-tertiary);
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.1);
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: var(--space-3) var(--space-4);
+            text-align: left;
+        }
+        
+        th {
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text-secondary);
+            border-bottom: 2px solid var(--border-primary);
+        }
+        
+        td {
+            font-size: 14px;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-secondary);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tr:hover td {
+            background: var(--bg-tertiary);
+        }
+        
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: var(--space-1) var(--space-3);
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .badge-primary {
+            background: var(--accent-light);
+            color: #1976D2;
+        }
+        
+        .badge-danger {
+            background: #FFEBEE;
+            color: #D32F2F;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+        
+        .modal-content {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            width: 420px;
+            max-width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.2s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .modal-header {
+            padding: var(--space-5) var(--space-6);
+            border-bottom: 1px solid var(--border-secondary);
+        }
+        
+        .modal-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .modal-body {
+            padding: var(--space-6);
+        }
+        
+        .modal-footer {
+            padding: var(--space-4) var(--space-6);
+            border-top: 1px solid var(--border-secondary);
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--space-3);
+        }
+        
+        .form-group {
+            margin-bottom: var(--space-4);
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: var(--space-2);
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-primary);
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+        }
+        
+        .form-group input::placeholder {
+            color: var(--text-tertiary);
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.1);
+        }
+        
+        .form-group select {
+            cursor: pointer;
+        }
+        
+        .form-group input[readonly] {
+            opacity: 0.7;
+            cursor: not-allowed;
+            background: var(--bg-tertiary);
+        }
+        
+        .empty-message {
+            text-align: center;
+            color: var(--text-tertiary);
+            padding: var(--space-8);
+            font-size: 14px;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: var(--space-6);
+            color: var(--text-muted);
+            font-size: 12px;
+            border-top: 1px solid var(--border-secondary);
+            background: var(--bg-secondary);
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 0 var(--space-4);
+            }
+            
+            .header-right span {
+                display: none;
+            }
+            
+            .container {
+                padding: var(--space-4);
+            }
+            
+            .actions-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-title">
+            <div class="logo">👥</div>
+            人员管理
+        </div>
+        <div class="header-right">
+            <span id="welcomeText">欢迎，管理员</span>
+            <button class="btn btn-secondary" onclick="goBack()">返回菜单</button>
+            <button class="btn btn-secondary" onclick="logout()">退出登录</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <div class="actions-bar">
+                    <button class="btn btn-primary" onclick="showAddUserModal()">添加用户</button>
+                    <button class="btn btn-secondary" onclick="loadUserList()">刷新</button>
+                    <input type="text" class="search-box" id="searchInput" placeholder="搜索用户..." onkeyup="searchUsers()">
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>姓名</th>
+                                <th>手机号</th>
+                                <th>部门</th>
+                                <th>角色</th>
+                                <th>最后登录</th>
+                                <th>创建时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="addUserModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>添加用户</h3>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>姓名 *</label>
+                    <input type="text" id="newUsername" placeholder="请输入姓名">
+                </div>
+                <div class="form-group">
+                    <label>手机号</label>
+                    <input type="text" id="newPhone" placeholder="请输入手机号">
+                </div>
+                <div class="form-group">
+                    <label>密码 *</label>
+                    <input type="password" id="newPassword" placeholder="请输入密码">
+                </div>
+                <div class="form-group">
+                    <label>角色</label>
+                    <select id="newRole">
+                        <option value="user">普通用户</option>
+                        <option value="admin">管理员</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeAddUserModal()">取消</button>
+                <button class="btn btn-primary" onclick="addUser()">添加</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="passwordModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>修改密码</h3>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>用户</label>
+                    <input type="text" id="passwordUsername" readonly>
+                </div>
+                <div class="form-group">
+                    <label>新密码 *</label>
+                    <input type="password" id="newPasswordInput" placeholder="请输入新密码">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closePasswordModal()">取消</button>
+                <button class="btn btn-warning" onclick="updatePassword()">确认修改</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="profileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>修改信息</h3>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>姓名</label>
+                    <input type="text" id="profileUsername" readonly>
+                </div>
+                <div class="form-group">
+                    <label>手机号</label>
+                    <input type="text" id="profilePhone" placeholder="请输入手机号">
+                </div>
+                <div class="form-group">
+                    <label>部门</label>
+                    <input type="text" id="profileDepartment" placeholder="请输入部门">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeProfileModal()">取消</button>
+                <button class="btn btn-primary" onclick="updateProfile()">保存</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        © 2026 人事管理系统
+    </div>
+    
+    <script>
+        const token = localStorage.getItem('token');
+        const username = localStorage.getItem('username');
+        const role = localStorage.getItem('role');
+        
+        if (!token || role !== 'admin') {
+            window.location.href = '/menu';
+        }
+        
+        if (username) {
+            document.getElementById('welcomeText').textContent = '欢迎，' + username;
+        }
+        
+        loadUserList();
+        
+        async function loadUserList() {
+            try {
+                const response = await fetch('/api/admin/users', {
+                    headers: { 'Authorization': token }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    const tbody = document.getElementById('userTableBody');
+                    tbody.innerHTML = '';
+                    
+                    if (data.data.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="7" class="empty-message">暂无用户数据</td></tr>';
+                        return;
+                    }
+                    
+                    data.data.forEach(user => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${user.姓名}</td>
+                            <td>${user.手机号 || '-'}</td>
+                            <td>${user.部门 || '-'}</td>
+                            <td><span class="badge ${user.role === 'admin' ? 'badge-danger' : 'badge-primary'}">${user.role === 'admin' ? '管理员' : '普通用户'}</span></td>
+                            <td>${user.last_login_time || '从未登录'}</td>
+                            <td>${user.created_at || '-'}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="showProfileModal('${user.姓名}', '${user.手机号 || ''}', '${user.部门 || ''}')">修改信息</button>
+                                <button class="btn btn-sm btn-warning" onclick="showPasswordModal('${user.姓名}')">修改密码</button>
+                                ${user.姓名 !== 'admin' ? `<button class="btn btn-sm btn-danger" onclick="deleteUser('${user.姓名}')">删除</button>` : ''}
+                            </td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                }
+            } catch (error) {
+                console.error('加载用户列表失败:', error);
+                document.getElementById('userTableBody').innerHTML = '<tr><td colspan="7" class="empty-message">加载失败</td></tr>';
+            }
+        }
+        
+        function searchUsers() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll('#userTableBody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+        
+        function showAddUserModal() {
+            document.getElementById('addUserModal').style.display = 'flex';
+            document.getElementById('newUsername').value = '';
+            document.getElementById('newPhone').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('newRole').value = 'user';
+        }
+        
+        function closeAddUserModal() {
+            document.getElementById('addUserModal').style.display = 'none';
+        }
+        
+        async function addUser() {
+            const username = document.getElementById('newUsername').value.trim();
+            const phone = document.getElementById('newPhone').value.trim();
+            const password = document.getElementById('newPassword').value;
+            const role = document.getElementById('newRole').value;
+            
+            if (!username || !password) {
+                alert('请填写用户名和密码');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/admin/users/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    },
+                    body: JSON.stringify({ username, phone, password, role })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(data.message);
+                    closeAddUserModal();
+                    loadUserList();
+                } else {
+                    alert('添加失败: ' + data.error);
+                }
+            } catch (error) {
+                alert('添加失败: ' + error.message);
+            }
+        }
+        
+        function showPasswordModal(username) {
+            document.getElementById('passwordModal').style.display = 'flex';
+            document.getElementById('passwordUsername').value = username;
+            document.getElementById('newPasswordInput').value = '';
+        }
+        
+        function closePasswordModal() {
+            document.getElementById('passwordModal').style.display = 'none';
+        }
+        
+        async function updatePassword() {
+            const username = document.getElementById('passwordUsername').value;
+            const newPassword = document.getElementById('newPasswordInput').value;
+            
+            if (!newPassword) {
+                alert('请输入新密码');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/admin/users/reset-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    },
+                    body: JSON.stringify({ username, new_password: newPassword })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(data.message);
+                    closePasswordModal();
+                } else {
+                    alert('修改失败: ' + data.error);
+                }
+            } catch (error) {
+                alert('修改失败: ' + error.message);
+            }
+        }
+        
+        function showProfileModal(username, phone, department) {
+            document.getElementById('profileModal').style.display = 'flex';
+            document.getElementById('profileUsername').value = username;
+            document.getElementById('profilePhone').value = phone;
+            document.getElementById('profileDepartment').value = department;
+        }
+        
+        function closeProfileModal() {
+            document.getElementById('profileModal').style.display = 'none';
+        }
+        
+        async function updateProfile() {
+            const username = document.getElementById('profileUsername').value;
+            const phone = document.getElementById('profilePhone').value.trim();
+            const department = document.getElementById('profileDepartment').value.trim();
+            
+            try {
+                const response = await fetch('/api/admin/users/update-profile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    },
+                    body: JSON.stringify({ username, phone, department })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(data.message);
+                    closeProfileModal();
+                    loadUserList();
+                } else {
+                    alert('修改失败: ' + data.error);
+                }
+            } catch (error) {
+                alert('修改失败: ' + error.message);
+            }
+        }
+        
+        async function deleteUser(username) {
+            if (!confirm(`确定要删除用户 "${username}" 吗？此操作不可恢复。`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/admin/users/delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    },
+                    body: JSON.stringify({ username })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(data.message);
+                    loadUserList();
+                } else {
+                    alert('删除失败: ' + data.error);
+                }
+            } catch (error) {
+                alert('删除失败: ' + error.message);
+            }
+        }
+        
+        function goBack() {
+            window.location.href = '/menu';
+        }
+        
+        async function logout() {
+            try {
+                await fetch('/api/logout', {
+                    method: 'POST',
+                    headers: { 'Authorization': token }
+                });
+            } catch (e) {
+                console.error('Logout error:', e);
+            }
+            
+            localStorage.removeItem('token');
+            localStorage.removeItem('username');
+            localStorage.removeItem('role');
+            window.location.href = '/login';
+        }
+    </script>
+</body>
+</html>

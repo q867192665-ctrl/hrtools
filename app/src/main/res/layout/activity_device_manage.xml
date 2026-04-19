@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="#9C27B0"
+            android:elevation="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="📱 设备管理"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white" />
+
+                <Button
+                    android:id="@+id/btnBack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:text="返回"
+                    android:textSize="12sp"
+                    android:backgroundTint="#7B1FA2"
+                    android:textColor="@color/white" />
+
+                <Button
+                    android:id="@+id/btnLogout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:text="退出"
+                    android:textSize="12sp"
+                    android:layout_marginStart="8dp"
+                    android:backgroundTint="#7B1FA2"
+                    android:textColor="@color/white" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvWelcome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="欢迎，管理员"
+                android:textSize="13sp"
+                android:textColor="#F3E5F5"
+                android:layout_marginTop="8dp" />
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="设备绑定列表"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:padding="12dp" />
+
+        <Button
+            android:id="@+id/btnRefreshBindings"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:text="刷新"
+            android:textSize="12sp"
+            android:layout_marginStart="12dp"
+            android:layout_marginBottom="8dp"
+            android:backgroundTint="#9C27B0" />
+
+        <LinearLayout
+            android:id="@+id/bindingsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="12dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="异常登录记录"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:padding="12dp"
+            android:layout_marginTop="16dp" />
+
+        <Button
+            android:id="@+id/btnRefreshAttempts"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:text="刷新"
+            android:textSize="12sp"
+            android:layout_marginStart="12dp"
+            android:layout_marginBottom="8dp"
+            android:backgroundTint="#9C27B0" />
+
+        <LinearLayout
+            android:id="@+id/attemptsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="12dp" />
+
+    </LinearLayout>
+
+</ScrollView>

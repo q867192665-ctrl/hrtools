@@ -1,0 +1,77 @@
+# Android 构建产物
+app/build/
+.gradle/
+*.apk
+*.aab
+*.dex
+*.class
+*.flat
+
+# Python 缓存
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# 数据库文件
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# 签名和导出文件
+backend/signatures/
+backend/exports/
+
+# IDE 配置
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# 系统文件
+.DS_Store
+Thumbs.db
+*.log
+
+# 环境配置
+.env
+.env.local
+*.local
+
+# 测试文件
+test_*.py
+*_test.py
+
+# 备份文件
+*_backup*
+*.bak
+
+# 临时文件
+temp/
+tmp/
+*.tmp
+
+# Node.js (如果有前端)
+node_modules/
+
+# Gradle
+gradle/
+gradlew
+gradlew.bat
+local.properties
+
+# Keystore
+*.jks
+*.keystore
+
+# 密钥和敏感信息
+*.pem
+*.key
+secrets/

@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人事管理系统 - 工资条管理</title>
+    <style>
+        :root {
+            --bg-primary: #F5F7FA;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #EEF2F7;
+            --accent-primary: #1E88E5;
+            --accent-hover: #1976D2;
+            --accent-light: #E3F2FD;
+            --text-primary: #212121;
+            --text-secondary: #616161;
+            --text-tertiary: #9E9E9E;
+            --text-muted: #BDBDBD;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --error: #F44336;
+            --info: #2196F3;
+            --border-primary: #E0E0E0;
+            --border-secondary: #EEEEEE;
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 20px;
+            --space-6: 24px;
+            --space-8: 32px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-primary);
+            padding: 0 var(--space-6);
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .header-title .logo {
+            width: 32px;
+            height: 32px;
+            background: var(--accent-primary);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+        
+        .header-right span {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .btn-logout {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-primary);
+            padding: var(--space-2) var(--space-4);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-logout:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        
+        .btn-menu {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-primary);
+            padding: var(--space-2) var(--space-4);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-menu:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--space-6);
+        }
+        
+        .tabs {
+            display: flex;
+            gap: var(--space-1);
+            background: var(--bg-tertiary);
+            padding: var(--space-1);
+            border-radius: 8px;
+            margin-bottom: var(--space-4);
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+        
+        .tab:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.5);
+        }
+        
+        .tab.active {
+            background: var(--bg-secondary);
+            color: var(--accent-primary);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+        }
+        
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: 8px;
+            padding: var(--space-5);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent-primary);
+        }
+        
+        .stat-card.success::before {
+            background: var(--success);
+        }
+        
+        .stat-card.warning::before {
+            background: var(--warning);
+        }
+        
+        .stat-card.info::before {
+            background: var(--info);
+        }
+        
+        .stat-card h3 {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-2);
+        }
+        
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-4);
+        }
+        
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: var(--space-3) var(--space-4);
+            text-align: left;
+        }
+        
+        th {
+            background: var(--bg-tertiary);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 2px solid var(--border-primary);
+        }
+        
+        td {
+            font-size: 14px;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-secondary);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tr:hover td {
+            background: var(--bg-tertiary);
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: var(--space-1) var(--space-3);
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-signed {
+            background: #E8F5E9;
+            color: #388E3C;
+        }
+        
+        .status-unsigned {
+            background: #FFEBEE;
+            color: #D32F2F;
+        }
+        
+        .status-queried {
+            background: var(--accent-light);
+            color: #1976D2;
+        }
+        
+        .btn {
+            padding: var(--space-2) var(--space-4);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-primary {
+            background: var(--accent-primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            box-shadow: 0 2px 8px rgba(30, 136, 229, 0.3);
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #43A047;
+        }
+        
+        .btn-danger {
+            background: var(--error);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #E53935;
+        }
+        
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-primary);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        
+        .btn-sm {
+            padding: var(--space-1) var(--space-3);
+            font-size: 12px;
+        }
+        
+        .actions-bar {
+            display: flex;
+            gap: var(--space-3);
+            margin-bottom: var(--space-4);
+            flex-wrap: wrap;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px 14px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: 4px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.1);
+        }
+        
+        .search-box::placeholder {
+            color: var(--text-tertiary);
+        }
+        
+        select {
+            padding: 10px 14px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: 4px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            cursor: pointer;
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+        
+        .upload-area {
+            border: 2px dashed var(--border-primary);
+            padding: var(--space-8);
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: var(--space-4);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            background: var(--bg-secondary);
+        }
+        
+        .upload-area:hover {
+            border-color: var(--accent-primary);
+            background: var(--accent-light);
+        }
+        
+        .upload-area.dragover {
+            border-color: var(--accent-primary);
+            background: var(--accent-light);
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: var(--space-4);
+        }
+        
+        .upload-area p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        .alert {
+            padding: var(--space-4);
+            border-radius: 4px;
+            margin-bottom: var(--space-4);
+            font-size: 14px;
+        }
+        
+        .alert-success {
+            background: #E8F5E9;
+            border: 1px solid #A5D6A7;
+            color: #2E7D32;
+        }
+        
+        .alert-error {
+            background: #FFEBEE;
+            border: 1px solid #EF9A9A;
+            color: #C62828;
+        }
+        
+        .alert-warning {
+            background: #FFF3E0;
+            border: 1px solid #FFCC80;
+            color: #E65100;
+        }
+        
+        .form-group {
+            margin-bottom: var(--space-4);
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: var(--space-2);
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: 4px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.1);
+        }
+        
+        .export-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-4);
+            margin-top: var(--space-4);
+        }
+        
+        .export-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: 8px;
+            padding: var(--space-5);
+        }
+        
+        .export-card h3 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-2);
+        }
+        
+        .export-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-4);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        
+        .modal-content {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.2s ease-out;
+        }
+        
+        .modal-header {
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-5) var(--space-6);
+            border-bottom: 1px solid var(--border-secondary);
+        }
+        
+        .modal-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--space-6);
+        }
+        
+        .modal-footer {
+            flex-shrink: 0;
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--space-3);
+            padding: var(--space-4) var(--space-6);
+            border-top: 1px solid var(--border-secondary);
+        }
+        
+        .close {
+            color: var(--text-secondary);
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--bg-tertiary);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+        
+        .close:hover {
+            color: var(--text-primary);
+            background: var(--border-primary);
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .loading {
+            text-align: center;
+            padding: var(--space-5);
+            color: var(--text-secondary);
+        }
+        
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--border-primary);
+            border-top-color: var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-left: var(--space-2);
+            vertical-align: middle;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .salary-detail-modal {
+            max-width: 900px;
+            max-height: 85vh;
+        }
+        
+        .salary-detail-modal .modal-body {
+            padding: var(--space-5);
+            overflow-y: auto;
+        }
+        
+        .salary-detail-modal .modal-body::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .salary-detail-modal .modal-body::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+            border-radius: 3px;
+        }
+        
+        .salary-detail-modal .modal-body::-webkit-scrollbar-thumb {
+            background: var(--border-primary);
+            border-radius: 3px;
+        }
+        
+        .salary-detail-header {
+            background: linear-gradient(135deg, var(--accent-primary) 0%, #1565C0 100%);
+            color: white;
+            padding: var(--space-5);
+            border-radius: 8px;
+            margin-bottom: var(--space-4);
+        }
+        
+        .salary-detail-header h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: var(--space-3);
+        }
+        
+        .salary-detail-header .info-row {
+            display: flex;
+            gap: var(--space-5);
+            flex-wrap: wrap;
+            font-size: 13px;
+            opacity: 0.9;
+        }
+        
+        .salary-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-4);
+        }
+        
+        .salary-detail-card {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: var(--space-4);
+        }
+        
+        .salary-detail-card h4 {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-3);
+        }
+        
+        .salary-detail-card .item {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--space-2) 0;
+            font-size: 13px;
+        }
+        
+        .salary-detail-card .item .label {
+            color: var(--text-tertiary);
+        }
+        
+        .salary-detail-card .item .value {
+            color: var(--text-primary);
+        }
+        
+        .salary-total {
+            background: linear-gradient(135deg, var(--success) 0%, #388E3C 100%);
+            color: white;
+            padding: var(--space-5);
+            border-radius: 8px;
+            text-align: center;
+            grid-column: 1 / -1;
+        }
+        
+        .salary-total h4 {
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: var(--space-2);
+        }
+        
+        .salary-total .amount {
+            font-size: 32px;
+            font-weight: 600;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: var(--space-6);
+            color: var(--text-muted);
+            font-size: 12px;
+            border-top: 1px solid var(--border-secondary);
+            background: var(--bg-secondary);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: var(--space-4);
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .tabs {
+                flex-wrap: wrap;
+            }
+            
+            .tab {
+                flex: 1;
+                text-align: center;
+            }
+            
+            .salary-detail-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+                max-height: 90vh;
+            }
+            
+            .salary-detail-modal {
+                max-height: 90vh;
+            }
+            
+            .header {
+                padding: 0 var(--space-4);
+            }
+            
+            .header-right span {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-title">
+            <div class="logo">💰</div>
+            工资条管理
+        </div>
+        <div class="header-right">
+            <span id="welcomeText">欢迎，管理员</span>
+            <button class="btn-menu" onclick="goToMenu()">返回菜单</button>
+            <button class="btn-logout" onclick="logout()">退出登录</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('overview')">数据概览</div>
+            <div class="tab" onclick="switchTab('upload')">上传工资条</div>
+            <div class="tab" onclick="switchTab('export')">导出报表</div>
+        </div>
+        
+        <div id="overview" class="tab-content active">
+            <div class="card" style="padding: var(--space-5); margin-bottom: var(--space-4);">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="overviewMonth">筛选月份</label>
+                    <input type="month" id="overviewMonth" style="max-width: 200px;" onchange="loadOverviewData()">
+                </div>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>总用户数</h3>
+                    <div class="value" id="totalUsers">0</div>
+                </div>
+                <div class="stat-card success">
+                    <h3>已签收</h3>
+                    <div class="value" id="signedCount">0</div>
+                </div>
+                <div class="stat-card warning">
+                    <h3>未签收</h3>
+                    <div class="value" id="unsignedCount">0</div>
+                </div>
+            </div>
+            
+            <h3 class="section-title">用户状态</h3>
+            <div class="card">
+                <div class="actions-bar">
+                    <input type="text" class="search-box" id="searchInput" placeholder="搜索用户名..." oninput="filterUsers()">
+                    <select id="statusFilter" onchange="filterUsers()">
+                        <option value="all">全部状态</option>
+                        <option value="signed">已签收</option>
+                        <option value="unsigned">未签收</option>
+                    </select>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>用户名</th>
+                                <th>状态</th>
+                                <th>签收时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div id="upload" class="tab-content">
+            <h3 class="section-title">上传工资条文件</h3>
+            
+            <div class="card" style="padding: var(--space-5); margin-bottom: var(--space-4);">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="uploadMonth">工资表所属月份 *</label>
+                    <input type="month" id="uploadMonth" style="max-width: 200px;">
+                </div>
+            </div>
+            
+            <div class="upload-area" id="uploadArea" onclick="triggerUpload()">
+                <div class="upload-icon">📁</div>
+                <p>点击或拖拽文件到此处上传</p>
+                <p style="font-size: 12px; color: var(--text-tertiary); margin-top: 8px;">支持 Excel 文件 (.xlsx, .xls)</p>
+                <input type="file" class="file-input" id="fileInput" accept=".xlsx,.xls" onchange="handleFileSelect(event)">
+            </div>
+            
+            <div id="uploadStatus"></div>
+            
+            <div class="card" style="padding: var(--space-5);">
+                <h4 style="margin-bottom: var(--space-3); color: var(--text-primary);">上传说明</h4>
+                <ul style="color: var(--text-secondary); font-size: 13px; line-height: 1.8; padding-left: var(--space-5);">
+                    <li>请先选择工资表所属月份</li>
+                    <li>请确保 Excel 文件格式正确，第一行为表头</li>
+                    <li>必须包含"姓名"列用于匹配用户</li>
+                    <li>上传后将覆盖该用户该月份的历史工资条数据</li>
+                    <li>建议先下载模板文件进行填写</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div id="export" class="tab-content">
+            <h3 class="section-title">导出报表</h3>
+            
+            <div class="card" style="padding: var(--space-5); margin-bottom: var(--space-4);">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="exportMonth">选择月份</label>
+                    <input type="month" id="exportMonth" style="max-width: 200px;">
+                </div>
+            </div>
+            
+            <div class="export-grid">
+                <div class="export-card">
+                    <h3>完整签收记录</h3>
+                    <p>导出包含签收时间和签名的完整记录</p>
+                    <button class="btn btn-primary" onclick="exportReport('full')">导出报表</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="salaryModal" class="modal">
+        <div class="modal-content salary-detail-modal">
+            <div class="modal-header">
+                <h2>工资详情</h2>
+                <button class="close" onclick="closeSalaryModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="salaryDetailBody">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="viewSignature()">查看签名</button>
+                <button class="btn btn-secondary" onclick="closeSalaryModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="signatureModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>签名预览</h2>
+                <button class="close" onclick="closeSignatureModal()">&times;</button>
+            </div>
+            <div class="modal-body" style="text-align: center; padding: var(--space-6);">
+                <div id="signatureLoading" class="loading">加载中</div>
+                <img id="signatureImage" style="max-width: 100%; display: none; border: 1px solid var(--border-primary); border-radius: 8px; background: white;">
+                <div id="signatureError" style="display: none; color: var(--error);">
+                    <p>该用户暂无签名</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeSignatureModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        © 2026 人事管理系统
+    </div>
+    
+    <script>
+        const API_BASE = window.location.origin;
+        const token = localStorage.getItem('token');
+        const username = localStorage.getItem('username');
+        const role = localStorage.getItem('role');
+        let currentViewingUser = null;
+        
+        if (!token) {
+            window.location.href = '/login';
+        }
+        
+        if (username) {
+            document.getElementById('welcomeText').textContent = '欢迎，' + username;
+        }
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+        
+        function loadOverviewData() {
+            loadStats();
+            loadUsers();
+        }
+        
+        async function loadStats() {
+            try {
+                const month = document.getElementById('overviewMonth').value;
+                let url = `${API_BASE}/api/admin/statistics`;
+                if (month) {
+                    url += `?month=${month}`;
+                }
+                
+                const response = await fetch(url, {
+                    headers: { 'Authorization': token }
+                });
+                const result = await response.json();
+                
+                if (result.success && result.data) {
+                    const data = result.data;
+                    document.getElementById('totalUsers').textContent = data.total_users || 0;
+                    document.getElementById('signedCount').textContent = data.signed_users || 0;
+                    document.getElementById('unsignedCount').textContent = (data.total_users || 0) - (data.signed_users || 0);
+                }
+            } catch (error) {
+                console.error('Failed to load stats:', error);
+            }
+        }
+        
+        async function loadUsers() {
+            try {
+                const month = document.getElementById('overviewMonth').value;
+                let url = `${API_BASE}/api/admin/status`;
+                if (month) {
+                    url += `?month=${month}`;
+                }
+                
+                const response = await fetch(url, {
+                    headers: { 'Authorization': token }
+                });
+                const result = await response.json();
+                
+                if (result.success && result.data) {
+                    renderUserTable(result.data);
+                }
+            } catch (error) {
+                console.error('Failed to load users:', error);
+            }
+        }
+        
+        function renderUserTable(users) {
+            const tbody = document.getElementById('userTableBody');
+            tbody.innerHTML = '';
+            
+            if (!users || users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-tertiary); padding: var(--space-8);">暂无用户数据</td></tr>';
+                return;
+            }
+            
+            users.forEach(user => {
+                const statusClass = user.signed ? 'status-signed' : 
+                                   user.viewed ? 'status-queried' : 'status-unsigned';
+                const statusText = user.signed ? '已签收' : 
+                                  user.viewed ? '已查询' : '未签收';
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.username}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td>${user.last_login || '-'}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" onclick="viewSalaryDetail('${user.username}')">查看详情</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        function filterUsers() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const status = document.getElementById('statusFilter').value;
+            const rows = document.querySelectorAll('#userTableBody tr');
+            
+            rows.forEach(row => {
+                const name = row.cells[0].textContent.toLowerCase();
+                const rowStatus = row.cells[1].textContent.includes('已签收') ? 'signed' : 'unsigned';
+                
+                const matchSearch = name.includes(search);
+                const matchStatus = status === 'all' || rowStatus === status;
+                
+                row.style.display = matchSearch && matchStatus ? '' : 'none';
+            });
+        }
+        
+        async function viewSalaryDetail(userName) {
+            currentViewingUser = userName;
+            const modal = document.getElementById('salaryModal');
+            const body = document.getElementById('salaryDetailBody');
+            
+            body.innerHTML = '<div class="loading">加载中</div>';
+            modal.style.display = 'flex';
+            
+            try {
+                const month = document.getElementById('overviewMonth').value;
+                let url = `${API_BASE}/api/admin/user-salary/${encodeURIComponent(userName)}`;
+                if (month) {
+                    url += `?month=${month}`;
+                }
+                
+                const response = await fetch(url, {
+                    headers: { 'Authorization': token }
+                });
+                const result = await response.json();
+                
+                if (!result.success) {
+                    body.innerHTML = `<p style="color: var(--error);">${result.error || '加载失败'}</p>`;
+                    return;
+                }
+                
+                const data = result.data;
+                if (!data || !data.salary) {
+                    body.innerHTML = `<p style="color: var(--error);">未找到工资信息</p>`;
+                    return;
+                }
+                
+                const salary = data.salary;
+                const summary = data.summary || {};
+                
+                let html = `
+                    <div class="salary-detail-header">
+                        <h3>${userName} - 工资条</h3>
+                        <div class="info-row">
+                            <span>月份: ${salary.月份 || '-'}</span>
+                            <span>签收状态: ${summary.签收状态 || '未签收'}</span>
+                        </div>
+                    </div>
+                    <div class="salary-detail-grid">
+                `;
+                
+                html += `<div class="salary-detail-card"><h4>基本信息</h4>`;
+                html += `<div class="item"><span class="label">序号</span><span class="value">${salary.序号 || '-'}</span></div>`;
+                html += `<div class="item"><span class="label">部门</span><span class="value">${salary.部门 || '-'}</span></div>`;
+                html += `<div class="item"><span class="label">姓名</span><span class="value">${salary.姓名 || '-'}</span></div>`;
+                html += `<div class="item"><span class="label">入职日期</span><span class="value">${salary.入职日期 ? String(salary.入职日期).substring(0, 10) : '-'}</span></div>`;
+                html += `<div class="item"><span class="label">岗位</span><span class="value">${salary.岗位 || '-'}</span></div>`;
+                html += `<div class="item"><span class="label">是否代扣社保</span><span class="value">${salary.是否代扣社保 ? '是' : '否'}</span></div>`;
+                html += `</div>`;
+                
+                html += `<div class="salary-detail-card"><h4>出勤信息</h4>`;
+                html += `<div class="item"><span class="label">应出勤（天）</span><span class="value">${salary.应出勤天数 || '-'}</span></div>`;
+                html += `<div class="item"><span class="label">实际出勤（天）</span><span class="value">${salary.实际出勤天数 || '-'}</span></div>`;
+                html += `<div class="item"><span class="label">上门服务（小时）</span><span class="value">${salary.上门服务小时 || '-'}</span></div>`;
+                html += `</div>`;
+                
+                html += `<div class="salary-detail-card"><h4>基本工资</h4>`;
+                html += `<div class="item"><span class="label">底薪</span><span class="value">¥${parseFloat(salary.基本工资底薪 || 0).toFixed(2)}</span></div>`;
+                html += `<div class="item"><span class="label">其它补贴</span><span class="value">¥${parseFloat(salary.基本工资其它补贴 || 0).toFixed(2)}</span></div>`;
+                html += `<div class="item"><span class="label">基本工资</span><span class="value">¥${parseFloat(salary.基本工资合计 || 0).toFixed(2)}</span></div>`;
+                html += `<div class="item"><span class="label">岗位工资</span><span class="value">¥${parseFloat(salary.岗位工资 || 0).toFixed(2)}</span></div>`;
+                html += `<div class="item"><span class="label">交通费</span><span class="value">¥${parseFloat(salary.交通费 || 0).toFixed(2)}</span></div>`;
+                html += `<div class="item"><span class="label">手机费</span><span class="value">¥${parseFloat(salary.手机费 || 0).toFixed(2)}</span></div>`;
+                html += `<div class="item"><span class="label">奖金</span><span class="value">¥${parseFloat(salary.奖金 || 0).toFixed(2)}</span></div>`;
+                html += `<div class="item"><span class="label">高温费</span><span class="value">¥${parseFloat(salary.高温费 || 0).toFixed(2)}</span></div>`;
+                html += `<div class="item"><span class="label">护理员绩效工资</span><span class="value">¥${parseFloat(salary.护理员绩效工资 || 0).toFixed(2)}</span></div>`;
+                html += `</div>`;
+                
+                html += `<div class="salary-detail-card"><h4>应扣款项</h4>`;
+                html += `<div class="item"><span class="label">缺勤扣款</span><span class="value">¥${parseFloat(salary.应扣款项缺勤扣款 || 0).toFixed(2)}</span></div>`;
+                html += `<div class="item"><span class="label">养老(8%)</span><span class="value">¥${parseFloat(salary.应扣款项养老 || 0).toFixed(2)}</span></div>`;
+                html += `<div class="item"><span class="label">医疗(2%)</span><span class="value">¥${parseFloat(salary.应扣款项医疗 || 0).toFixed(2)}</span></div>`;
+                html += `<div class="item"><span class="label">失业(0.5%)</span><span class="value">¥${parseFloat(salary.应扣款项失业 || 0).toFixed(2)}</span></div>`;
+                html += `<div class="item"><span class="label">公积金(7%)</span><span class="value">¥${parseFloat(salary.应扣款项公积金 || 0).toFixed(2)}</span></div>`;
+                html += `<div class="item"><span class="label">应缴个税</span><span class="value">¥${parseFloat(salary.应扣款项应缴个税 || 0).toFixed(2)}</span></div>`;
+                html += `<div class="item"><span class="label">其它扣款</span><span class="value">¥${parseFloat(salary.其它扣款 || 0).toFixed(2)}</span></div>`;
+                html += `<div class="item"><span class="label">住宿扣款</span><span class="value">¥${parseFloat(salary.住宿扣款 || 0).toFixed(2)}</span></div>`;
+                html += `<div class="item"><span class="label">水电扣款</span><span class="value">¥${parseFloat(salary.水电扣款 || 0).toFixed(2)}</span></div>`;
+                html += `</div>`;
+                
+                html += `
+                    <div class="salary-total">
+                        <h4>实发工资</h4>
+                        <div class="amount">¥${parseFloat(salary.实发工资 || 0).toFixed(2)}</div>
+                    </div>
+                `;
+                
+                if (summary.查询状态 === '有异议' && summary.异议内容) {
+                    html += `
+                        <div class="salary-detail-card" style="grid-column: 1 / -1; background: #FFF3E0;">
+                            <h4 style="color: var(--warning);">异议内容</h4>
+                            <p style="font-size: 13px; color: var(--text-primary);">${summary.异议内容}</p>
+                        </div>
+                    `;
+                }
+                
+                html += `</div>`;
+                body.innerHTML = html;
+            } catch (error) {
+                body.innerHTML = `<p style="color: var(--error);">加载失败: ${error.message}</p>`;
+            }
+        }
+        
+        function closeSalaryModal() {
+            document.getElementById('salaryModal').style.display = 'none';
+        }
+        
+        async function viewSignature() {
+            if (!currentViewingUser) {
+                alert('未找到用户信息');
+                return;
+            }
+            
+            const month = document.getElementById('overviewMonth').value;
+            
+            const loadingEl = document.getElementById('signatureLoading');
+            const imageEl = document.getElementById('signatureImage');
+            const errorEl = document.getElementById('signatureError');
+            
+            loadingEl.style.display = 'block';
+            imageEl.style.display = 'none';
+            errorEl.style.display = 'none';
+            
+            document.getElementById('signatureModal').style.display = 'flex';
+            
+            try {
+                let url = `${API_BASE}/api/admin/signature/${encodeURIComponent(currentViewingUser)}`;
+                if (month) {
+                    url += `?month=${month}`;
+                }
+                
+                const response = await fetch(url, {
+                    headers: { 'Authorization': token }
+                });
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = URL.createObjectURL(blob);
+                    
+                    imageEl.onload = function() {
+                        URL.revokeObjectURL(url);
+                    };
+                    
+                    imageEl.src = url;
+                    loadingEl.style.display = 'none';
+                    imageEl.style.display = 'block';
+                } else {
+                    const data = await response.json();
+                    loadingEl.style.display = 'none';
+                    errorEl.style.display = 'block';
+                    errorEl.querySelector('p').textContent = data.error || '该用户暂无签名';
+                }
+            } catch (error) {
+                loadingEl.style.display = 'none';
+                errorEl.style.display = 'block';
+                errorEl.querySelector('p').textContent = '获取签名失败: ' + error.message;
+            }
+        }
+        
+        function closeSignatureModal() {
+            document.getElementById('signatureModal').style.display = 'none';
+        }
+        
+        function triggerUpload() {
+            const month = document.getElementById('uploadMonth').value;
+            if (!month) {
+                alert('请先选择工资表所属月份');
+                return;
+            }
+            document.getElementById('fileInput').click();
+        }
+        
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const month = document.getElementById('uploadMonth').value;
+            if (!month) {
+                alert('请先选择工资表所属月份');
+                event.target.value = '';
+                return;
+            }
+            
+            uploadFile(file, month);
+        }
+        
+        const uploadArea = document.getElementById('uploadArea');
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            const month = document.getElementById('uploadMonth').value;
+            if (!month) {
+                alert('请先选择工资表所属月份');
+                return;
+            }
+            
+            const file = e.dataTransfer.files[0];
+            if (file) uploadFile(file, month);
+        });
+        
+        async function uploadFile(file, month) {
+            try {
+                const checkResponse = await fetch(`${API_BASE}/api/admin/check-month-data?month=${month}`, {
+                    headers: { 'Authorization': token }
+                });
+                
+                const checkData = await checkResponse.json();
+                
+                if (checkData.success && checkData.has_data) {
+                    const confirmed = confirm(`该月份已有 ${checkData.count} 条工资记录。\n\n上传新工资表将：\n1. 删除旧的工资数据\n2. 重置所有用户的签收状态\n3. 删除相关的签名文件\n\n是否继续？`);
+                    if (!confirmed) {
+                        document.getElementById('fileInput').value = '';
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.error('检查月份数据失败:', error);
+            }
+            
+            const statusDiv = document.getElementById('uploadStatus');
+            statusDiv.innerHTML = '<div class="alert" style="background: var(--accent-light); color: var(--accent-primary);">正在上传...</div>';
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('month', month);
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/upload-salary`, {
+                    method: 'POST',
+                    headers: { 'Authorization': token },
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    let message = data.message || `上传成功！导入 ${data.imported_count || 0} 条记录`;
+                    if (data.error_count > 0) {
+                        message += `，失败 ${data.error_count} 条`;
+                    }
+                    
+                    if (data.cleared) {
+                        message += `<br><br><strong style="color: var(--warning);">⚠️ 已清理同月份旧数据：</strong>`;
+                        message += `<br>- 工资记录: ${data.cleared.salary_deleted} 条`;
+                        message += `<br>- 签收记录: ${data.cleared.summary_deleted} 条`;
+                        message += `<br>- 签名文件: ${data.cleared.signature_files_deleted} 个`;
+                        message += `<br><span style="color: var(--text-secondary); font-size: 12px;">所有用户当月签收状态已重置，需重新签收</span>`;
+                    }
+                    
+                    let alertClass = 'alert-success';
+                    if (data.new_users && data.new_users.length > 0) {
+                        alertClass = 'alert-warning';
+                        message = `上传成功！导入 ${data.imported_count || 0} 条记录`;
+                        if (data.error_count > 0) {
+                            message += `，失败 ${data.error_count} 条`;
+                        }
+                        message += `<br><br><strong>发现新用户：</strong>${data.new_users.join('、')}<br>这些用户的工资信息暂不显示，请前往"人员管理"页面创建账号后即可显示。`;
+                        
+                        if (data.cleared) {
+                            message += `<br><br><strong style="color: var(--warning);">⚠️ 已清理同月份旧数据：</strong>`;
+                            message += `<br>- 工资记录: ${data.cleared.salary_deleted} 条`;
+                            message += `<br>- 签收记录: ${data.cleared.summary_deleted} 条`;
+                            message += `<br>- 签名文件: ${data.cleared.signature_files_deleted} 个`;
+                        }
+                    }
+                    
+                    statusDiv.innerHTML = `<div class="alert ${alertClass}">${message}</div>`;
+                    document.getElementById('fileInput').value = '';
+                    loadOverviewData();
+                } else {
+                    statusDiv.innerHTML = `<div class="alert alert-error">${data.error || '上传失败'}</div>`;
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="alert alert-error">上传失败: ${error.message}</div>`;
+            }
+        }
+        
+        async function exportReport(type) {
+            const month = document.getElementById('exportMonth').value;
+            
+            try {
+                let url = `${API_BASE}/api/admin/export-report?type=${type}`;
+                if (month) {
+                    url += `&month=${month}`;
+                }
+                
+                const response = await fetch(url, {
+                    headers: { 'Authorization': token }
+                });
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const downloadUrl = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = downloadUrl;
+                    
+                    let filename;
+                    if (type === 'full' && month) {
+                        const monthDisplay = month.replace('-', '年') + '月';
+                        filename = `${monthDisplay}签收记录表.xlsx`;
+                    } else {
+                        const monthSuffix = month ? `_${month}` : '';
+                        filename = `salary_report_${type}${monthSuffix}.xlsx`;
+                    }
+                    
+                    a.download = filename;
+                    a.click();
+                    URL.revokeObjectURL(downloadUrl);
+                } else {
+                    const data = await response.json();
+                    alert('导出失败: ' + (data.error || '未知错误'));
+                }
+            } catch (error) {
+                alert('导出失败: ' + error.message);
+            }
+        }
+        
+        function goToMenu() {
+            window.location.href = '/menu';
+        }
+        
+        async function logout() {
+            try {
+                await fetch('/api/logout', {
+                    method: 'POST',
+                    headers: { 'Authorization': token }
+                });
+            } catch (e) {
+                console.error('Logout error:', e);
+            }
+            
+            localStorage.removeItem('token');
+            localStorage.removeItem('username');
+            localStorage.removeItem('role');
+            window.location.href = '/login';
+        }
+        
+        loadOverviewData();
+    </script>
+</body>
+</html>

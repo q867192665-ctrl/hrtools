@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>请假管理 - 人事管理系统</title>
+    <style>
+        :root {
+            --bg-primary: #F5F7FA;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #EEF2F7;
+            --accent-primary: #1E88E5;
+            --accent-hover: #1976D2;
+            --accent-light: #E3F2FD;
+            --text-primary: #212121;
+            --text-secondary: #616161;
+            --text-tertiary: #9E9E9E;
+            --text-muted: #BDBDBD;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --error: #F44336;
+            --info: #2196F3;
+            --border-primary: #E0E0E0;
+            --border-secondary: #EEEEEE;
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 20px;
+            --space-6: 24px;
+            --space-8: 32px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-primary);
+            padding: 0 var(--space-6);
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .header-title .logo {
+            width: 32px;
+            height: 32px;
+            background: var(--accent-primary);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+        
+        .header-right span {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .btn {
+            padding: var(--space-2) var(--space-4);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: inherit;
+            transition: all 0.2s ease;
+            border: none;
+        }
+        
+        .btn-logout {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-primary);
+        }
+        
+        .btn-logout:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        
+        .btn-menu {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-primary);
+        }
+        
+        .btn-menu:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        
+        .btn-primary {
+            background: var(--accent-primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #43A047;
+        }
+        
+        .btn-info {
+            background: var(--info);
+            color: white;
+        }
+        
+        .btn-info:hover {
+            background: #1976D2;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--space-6);
+        }
+        
+        .toolbar {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: 8px;
+            padding: var(--space-4);
+            margin-bottom: var(--space-4);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        
+        .filter-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--space-4);
+            margin-bottom: var(--space-3);
+        }
+        
+        .filter-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .filter-group {
+            display: flex;
+            gap: var(--space-3);
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .filter-group select,
+        .filter-group input {
+            padding: var(--space-2) var(--space-3);
+            border: 1px solid var(--border-primary);
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        
+        .filter-group select {
+            min-width: 120px;
+        }
+        
+        .filter-group input {
+            min-width: 200px;
+        }
+        
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 2px var(--accent-light);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: var(--space-2);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+        }
+        
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: 8px;
+            padding: var(--space-5);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent-primary);
+        }
+        
+        .stat-card.success::before {
+            background: var(--success);
+        }
+        
+        .stat-card.warning::before {
+            background: var(--warning);
+        }
+        
+        .stat-card.info::before {
+            background: var(--info);
+        }
+        
+        .stat-card h3 {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-2);
+        }
+        
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        
+        .card-header {
+            padding: var(--space-4);
+            border-bottom: 1px solid var(--border-primary);
+            background: var(--bg-tertiary);
+        }
+        
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: var(--space-3) var(--space-4);
+            text-align: left;
+        }
+        
+        th {
+            background: var(--bg-tertiary);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 2px solid var(--border-primary);
+        }
+        
+        td {
+            font-size: 14px;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-secondary);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tr:hover td {
+            background: var(--bg-tertiary);
+        }
+        
+        .empty-message {
+            text-align: center;
+            padding: var(--space-8);
+            color: var(--text-tertiary);
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-group select,
+            .filter-group input {
+                min-width: auto;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-title">
+            <div class="logo">📋</div>
+            <span>请假管理</span>
+        </div>
+        <div class="header-right">
+            <button class="btn btn-menu" onclick="goBack()">返回菜单</button>
+            <button class="btn btn-logout" onclick="logout()">退出登录</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="toolbar">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label>年份：</label>
+                    <select id="yearFilter" onchange="loadLeaveRecords()">
+                        <option value="">全部</option>
+                    </select>
+                    
+                    <label>月份：</label>
+                    <select id="monthFilter" onchange="loadLeaveRecords()">
+                        <option value="">全部</option>
+                        <option value="01">1月</option>
+                        <option value="02">2月</option>
+                        <option value="03">3月</option>
+                        <option value="04">4月</option>
+                        <option value="05">5月</option>
+                        <option value="06">6月</option>
+                        <option value="07">7月</option>
+                        <option value="08">8月</option>
+                        <option value="09">9月</option>
+                        <option value="10">10月</option>
+                        <option value="11">11月</option>
+                        <option value="12">12月</option>
+                    </select>
+                    
+                    <label>姓名：</label>
+                    <input type="text" id="nameFilter" placeholder="输入姓名搜索">
+                    
+                    <button class="btn btn-primary" onclick="loadLeaveRecords()">查询</button>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-success" onclick="exportLeaveRecords('all')">导出全部记录</button>
+                    <button class="btn btn-info" onclick="exportLeaveRecords('current')">导出当前筛选</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>总请假数</h3>
+                <div class="value" id="totalCount">0</div>
+            </div>
+            <div class="stat-card success">
+                <h3>总请假天数</h3>
+                <div class="value" id="totalDays">0</div>
+            </div>
+            <div class="stat-card warning">
+                <h3>本月请假天数</h3>
+                <div class="value" id="monthDays">0</div>
+            </div>
+            <div class="stat-card info">
+                <h3>本年请假天数</h3>
+                <div class="value" id="yearDays">0</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">请假记录列表</div>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>姓名</th>
+                            <th>请假类型</th>
+                            <th>开始日期</th>
+                            <th>结束日期</th>
+                            <th>请假天数</th>
+                            <th>请假原因</th>
+                            <th>申请时间</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaveTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const token = localStorage.getItem('token');
+        
+        if (!token) {
+            window.location.href = '/login';
+        }
+        
+        initYearFilter();
+        loadLeaveRecords();
+        
+        function initYearFilter() {
+            const yearSelect = document.getElementById('yearFilter');
+            const currentYear = new Date().getFullYear();
+            
+            for (let year = currentYear; year >= currentYear - 5; year--) {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year + '年';
+                yearSelect.appendChild(option);
+            }
+        }
+        
+        async function loadLeaveRecords() {
+            try {
+                const year = document.getElementById('yearFilter').value;
+                const month = document.getElementById('monthFilter').value;
+                const name = document.getElementById('nameFilter').value;
+                
+                let url = '/api/admin/leave/records?';
+                if (year) url += `year=${year}&`;
+                if (month) url += `month=${month}&`;
+                if (name) url += `name=${encodeURIComponent(name)}&`;
+                
+                const response = await fetch(url, {
+                    headers: { 'Authorization': token }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayLeaveRecords(data.data);
+                    updateStats(data.data);
+                } else {
+                    alert('获取请假记录失败: ' + data.error);
+                }
+            } catch (error) {
+                alert('获取请假记录失败: ' + error.message);
+            }
+        }
+        
+        function displayLeaveRecords(records) {
+            const tbody = document.getElementById('leaveTableBody');
+            tbody.innerHTML = '';
+            
+            if (records.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-message">暂无请假记录</td></tr>';
+                return;
+            }
+            
+            records.forEach(record => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${record.姓名}</td>
+                    <td>${record.请假类型}</td>
+                    <td>${record.开始日期}</td>
+                    <td>${record.结束日期}</td>
+                    <td>${record.请假天数}</td>
+                    <td>${record.请假原因 || '-'}</td>
+                    <td>${record.申请时间 || '-'}</td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+        
+        function updateStats(records) {
+            const total = records.length;
+            const totalDays = records.reduce((sum, r) => sum + (r.请假天数 || 0), 0);
+            
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('totalDays').textContent = totalDays.toFixed(1);
+            
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const currentMonth = now.getMonth() + 1;
+            
+            const monthDays = records
+                .filter(r => {
+                    const startDate = new Date(r.开始日期);
+                    return startDate.getFullYear() === currentYear && 
+                           startDate.getMonth() + 1 === currentMonth;
+                })
+                .reduce((sum, r) => sum + (r.请假天数 || 0), 0);
+            
+            const yearDays = records
+                .filter(r => {
+                    const startDate = new Date(r.开始日期);
+                    return startDate.getFullYear() === currentYear;
+                })
+                .reduce((sum, r) => sum + (r.请假天数 || 0), 0);
+            
+            document.getElementById('monthDays').textContent = monthDays.toFixed(1);
+            document.getElementById('yearDays').textContent = yearDays.toFixed(1);
+        }
+        
+        async function exportLeaveRecords(exportType) {
+            try {
+                const year = document.getElementById('yearFilter').value;
+                const month = document.getElementById('monthFilter').value;
+                const name = document.getElementById('nameFilter').value;
+                
+                let url = '/api/admin/leave/export?';
+                
+                if (exportType === 'current') {
+                    if (year) url += `year=${year}&`;
+                    if (month) url += `month=${month}&`;
+                    if (name) url += `name=${encodeURIComponent(name)}&`;
+                }
+                
+                const response = await fetch(url, {
+                    headers: { 'Authorization': token }
+                });
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const downloadUrl = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = downloadUrl;
+                    a.download = response.headers.get('content-disposition').split('filename=')[1];
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(downloadUrl);
+                } else {
+                    const data = await response.json();
+                    alert('导出失败: ' + data.error);
+                }
+            } catch (error) {
+                alert('导出失败: ' + error.message);
+            }
+        }
+        
+        function goBack() {
+            window.location.href = '/menu';
+        }
+        
+        async function logout() {
+            try {
+                await fetch('/api/logout', {
+                    method: 'POST',
+                    headers: { 'Authorization': token }
+                });
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            } catch (error) {
+                alert('退出登录失败: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

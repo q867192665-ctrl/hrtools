@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人事管理系统 - 设备管理</title>
+    <style>
+        :root {
+            --bg-primary: #F5F7FA;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #EEF2F7;
+            --accent-primary: #1E88E5;
+            --accent-hover: #1976D2;
+            --accent-light: #E3F2FD;
+            --text-primary: #212121;
+            --text-secondary: #616161;
+            --text-tertiary: #9E9E9E;
+            --text-muted: #BDBDBD;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --error: #F44336;
+            --info: #2196F3;
+            --purple: #9C27B0;
+            --border-primary: #E0E0E0;
+            --border-secondary: #EEEEEE;
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 20px;
+            --space-6: 24px;
+            --space-8: 32px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            color: var(--text-primary);
+        }
+        
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-primary);
+            padding: 0 var(--space-6);
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .header-title .logo {
+            width: 32px;
+            height: 32px;
+            background: var(--accent-primary);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+        
+        .header-right span {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .btn {
+            padding: var(--space-2) var(--space-4);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-primary {
+            background: var(--accent-primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            box-shadow: 0 2px 8px rgba(30, 136, 229, 0.3);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-primary);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        
+        .btn-danger {
+            background: var(--error);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #E53935;
+        }
+        
+        .btn-sm {
+            padding: var(--space-1) var(--space-3);
+            font-size: 12px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--space-6);
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-5);
+        }
+        
+        @media (max-width: 1000px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-5);
+            border-bottom: 1px solid var(--border-secondary);
+            background: var(--bg-tertiary);
+        }
+        
+        .card-header h3 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .badge-warning {
+            display: inline-flex;
+            align-items: center;
+            background: #FFF3E0;
+            color: var(--warning);
+            padding: var(--space-1) var(--space-3);
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-left: var(--space-2);
+        }
+        
+        .card-body {
+            padding: 0;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .table-container::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        
+        .table-container::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+        }
+        
+        .table-container::-webkit-scrollbar-thumb {
+            background: var(--border-primary);
+            border-radius: 3px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: var(--space-3) var(--space-4);
+            text-align: left;
+        }
+        
+        th {
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text-secondary);
+            border-bottom: 2px solid var(--border-primary);
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        
+        td {
+            font-size: 14px;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-secondary);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tr:hover td {
+            background: var(--bg-tertiary);
+        }
+        
+        .device-id {
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 12px;
+            color: var(--text-tertiary);
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .empty-message {
+            text-align: center;
+            color: var(--text-tertiary);
+            padding: var(--space-8);
+            font-size: 14px;
+        }
+        
+        .matched-user {
+            color: var(--error);
+            font-weight: 500;
+        }
+        
+        .no-match {
+            color: var(--text-tertiary);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: var(--space-6);
+            color: var(--text-muted);
+            font-size: 12px;
+            border-top: 1px solid var(--border-secondary);
+            background: var(--bg-secondary);
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 0 var(--space-4);
+            }
+            
+            .header-right span {
+                display: none;
+            }
+            
+            .container {
+                padding: var(--space-4);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-title">
+            <div class="logo">📱</div>
+            设备管理
+        </div>
+        <div class="header-right">
+            <span id="welcomeText">欢迎，管理员</span>
+            <button class="btn btn-secondary" onclick="goBack()">返回菜单</button>
+            <button class="btn btn-secondary" onclick="logout()">退出登录</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="grid">
+            <div class="card">
+                <div class="card-header">
+                    <h3>设备绑定列表</h3>
+                    <button class="btn btn-secondary btn-sm" onclick="loadDeviceBindings()">刷新</button>
+                </div>
+                <div class="card-body">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>用户名</th>
+                                    <th>设备ID</th>
+                                    <th>设备信息</th>
+                                    <th>绑定时间</th>
+                                    <th>最后登录</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="deviceBindingsBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>异常登录记录 <span id="failedCount" class="badge-warning"></span></h3>
+                    <button class="btn btn-secondary btn-sm" onclick="loadFailedAttempts()">刷新</button>
+                </div>
+                <div class="card-body">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>尝试账号</th>
+                                    <th>设备ID</th>
+                                    <th>设备信息</th>
+                                    <th>匹配账号</th>
+                                    <th>时间</th>
+                                </tr>
+                            </thead>
+                            <tbody id="failedAttemptsBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        © 2026 人事管理系统
+    </div>
+    
+    <script>
+        const token = localStorage.getItem('token');
+        const username = localStorage.getItem('username');
+        const role = localStorage.getItem('role');
+        
+        if (!token || role !== 'admin') {
+            window.location.href = '/menu';
+        }
+        
+        if (username) {
+            document.getElementById('welcomeText').textContent = '欢迎，' + username;
+        }
+        
+        loadDeviceBindings();
+        loadFailedAttempts();
+        
+        async function loadDeviceBindings() {
+            try {
+                const response = await fetch('/api/admin/device-bindings', {
+                    headers: { 'Authorization': token }
+                });
+                const data = await response.json();
+                
+                const tbody = document.getElementById('deviceBindingsBody');
+                tbody.innerHTML = '';
+                
+                if (data.success && data.bindings.length > 0) {
+                    data.bindings.forEach(binding => {
+                        const shortDeviceId = binding.device_id ? binding.device_id.substring(0, 12) + '...' : '--';
+                        const row = `
+                            <tr>
+                                <td><strong>${binding.username}</strong></td>
+                                <td class="device-id" title="${binding.device_id}">${shortDeviceId}</td>
+                                <td>${binding.device_info || '-'}</td>
+                                <td>${binding.bound_at ? new Date(binding.bound_at).toLocaleString() : '-'}</td>
+                                <td>${binding.last_login_at ? new Date(binding.last_login_at).toLocaleString() : '-'}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-danger" onclick="unbindDevice('${binding.username}')">解绑</button>
+                                </td>
+                            </tr>
+                        `;
+                        tbody.innerHTML += row;
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="6" class="empty-message">暂无设备绑定记录</td></tr>';
+                }
+            } catch (error) {
+                console.error('加载设备绑定失败:', error);
+                document.getElementById('deviceBindingsBody').innerHTML = '<tr><td colspan="6" class="empty-message">加载失败</td></tr>';
+            }
+        }
+        
+        async function unbindDevice(username) {
+            if (!confirm(`确定要解绑用户 "${username}" 的设备吗？\n解绑后用户需要重新绑定设备才能登录。`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/admin/unbind-device', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': token,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('解绑成功！');
+                    loadDeviceBindings();
+                } else {
+                    alert('解绑失败: ' + data.error);
+                }
+            } catch (error) {
+                alert('解绑失败: ' + error.message);
+            }
+        }
+        
+        async function loadFailedAttempts() {
+            try {
+                const response = await fetch('/api/admin/failed-attempts?limit=50', {
+                    headers: { 'Authorization': token }
+                });
+                const data = await response.json();
+                
+                const countSpan = document.getElementById('failedCount');
+                const tbody = document.getElementById('failedAttemptsBody');
+                tbody.innerHTML = '';
+                
+                if (data.success && data.attempts.length > 0) {
+                    countSpan.textContent = data.attempts.length + '条';
+                    
+                    data.attempts.forEach(attempt => {
+                        const shortDeviceId = attempt.device_id ? attempt.device_id.substring(0, 12) + '...' : '--';
+                        const matchedClass = attempt.matched_username ? 'matched-user' : 'no-match';
+                        const row = `
+                            <tr>
+                                <td>${attempt.username}</td>
+                                <td class="device-id" title="${attempt.device_id}">${shortDeviceId}</td>
+                                <td>${attempt.device_info || '-'}</td>
+                                <td class="${matchedClass}">${attempt.matched_username || '-'}</td>
+                                <td>${new Date(attempt.attempt_time).toLocaleString()}</td>
+                            </tr>
+                        `;
+                        tbody.innerHTML += row;
+                    });
+                } else {
+                    countSpan.textContent = '';
+                    tbody.innerHTML = '<tr><td colspan="5" class="empty-message">暂无异常登录记录</td></tr>';
+                }
+            } catch (error) {
+                console.error('加载异常登录记录失败:', error);
+                document.getElementById('failedAttemptsBody').innerHTML = '<tr><td colspan="5" class="empty-message">加载失败</td></tr>';
+            }
+        }
+        
+        function goBack() {
+            window.location.href = '/menu';
+        }
+        
+        async function logout() {
+            try {
+                await fetch('/api/logout', {
+                    method: 'POST',
+                    headers: { 'Authorization': token }
+                });
+            } catch (e) {}
+            
+            localStorage.removeItem('token');
+            localStorage.removeItem('username');
+            localStorage.removeItem('role');
+            window.location.href = '/login';
+        }
+    </script>
+</body>
+</html>

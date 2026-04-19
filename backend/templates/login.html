@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人事管理系统 - 登录</title>
+    <style>
+        :root {
+            --bg-primary: #F5F7FA;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #EEF2F7;
+            --accent-primary: #1E88E5;
+            --accent-hover: #1976D2;
+            --accent-light: #E3F2FD;
+            --text-primary: #212121;
+            --text-secondary: #616161;
+            --text-tertiary: #9E9E9E;
+            --text-muted: #BDBDBD;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --error: #F44336;
+            --border-primary: #E0E0E0;
+            --border-secondary: #EEEEEE;
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 20px;
+            --space-6: 24px;
+            --space-8: 32px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-primary);
+        }
+        
+        .login-wrapper {
+            display: flex;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            max-width: 900px;
+            width: 90%;
+        }
+        
+        .login-banner {
+            flex: 1;
+            background: linear-gradient(135deg, #1E88E5 0%, #1565C0 100%);
+            padding: var(--space-8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+        }
+        
+        .login-banner .banner-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin-bottom: var(--space-6);
+        }
+        
+        .login-banner h2 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: var(--space-3);
+        }
+        
+        .login-banner p {
+            font-size: 14px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        .login-container {
+            flex: 1;
+            padding: var(--space-8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .login-header {
+            margin-bottom: var(--space-6);
+        }
+        
+        .login-header h1 {
+            color: var(--text-primary);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: var(--space-2);
+        }
+        
+        .login-header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: var(--space-5);
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: var(--space-2);
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: 4px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.1);
+        }
+        
+        .form-group input::placeholder {
+            color: var(--text-tertiary);
+        }
+        
+        .btn-login {
+            width: 100%;
+            padding: 12px 24px;
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 15px;
+            font-weight: 500;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-login:hover {
+            background: var(--accent-hover);
+            box-shadow: 0 4px 12px rgba(30, 136, 229, 0.3);
+        }
+        
+        .btn-login:active {
+            background: #1565C0;
+        }
+        
+        .btn-login:disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        
+        .error-message {
+            background: #FFEBEE;
+            border: 1px solid #FFCDD2;
+            color: var(--error);
+            padding: var(--space-3) var(--space-4);
+            border-radius: 4px;
+            margin-bottom: var(--space-5);
+            display: none;
+            font-size: 13px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: var(--space-5);
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+        
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid var(--border-primary);
+            border-top-color: var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-left: var(--space-2);
+            vertical-align: middle;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: var(--space-6);
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+        
+        @media (max-width: 768px) {
+            .login-wrapper {
+                flex-direction: column;
+            }
+            
+            .login-banner {
+                padding: var(--space-6);
+            }
+            
+            .login-banner .banner-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 30px;
+            }
+            
+            .login-banner h2 {
+                font-size: 22px;
+            }
+            
+            .login-container {
+                padding: var(--space-6);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-wrapper">
+        <div class="login-banner">
+            <div class="banner-icon">🏢</div>
+            <h2>人事管理系统</h2>
+            <p>高效管理企业人事信息<br>安全可靠的工资条签收平台</p>
+        </div>
+        
+        <div class="login-container">
+            <div class="login-header">
+                <h1>欢迎登录</h1>
+                <p>请输入您的账号信息</p>
+            </div>
+            
+            <div class="error-message" id="errorMessage"></div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" name="username" required placeholder="请输入用户名" autocomplete="username">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" name="password" required placeholder="请输入密码" autocomplete="current-password">
+                </div>
+                
+                <button type="submit" class="btn-login" id="loginBtn">登 录</button>
+            </form>
+            
+            <div class="loading" id="loading">登录中</div>
+            
+            <div class="footer">
+                © 2026 人事管理系统
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+            const loading = document.getElementById('loading');
+            const loginBtn = document.getElementById('loginBtn');
+            
+            errorMessage.style.display = 'none';
+            loading.style.display = 'block';
+            loginBtn.disabled = true;
+            
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: username,
+                        password: password
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('username', username);
+                    localStorage.setItem('role', data.role);
+                    window.location.href = '/menu';
+                } else {
+                    errorMessage.textContent = data.error || '登录失败';
+                    errorMessage.style.display = 'block';
+                }
+            } catch (error) {
+                errorMessage.textContent = '连接服务器失败: ' + error.message;
+                errorMessage.style.display = 'block';
+            } finally {
+                loading.style.display = 'none';
+                loginBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

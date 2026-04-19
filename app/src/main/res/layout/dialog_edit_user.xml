@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="手机号"
+        android:textSize="12sp"
+        android:textColor="#666666" />
+
+    <EditText
+        android:id="@+id/etPhone"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:hint="请输入手机号"
+        android:textSize="14sp"
+        android:inputType="phone"
+        android:paddingHorizontal="12dp"
+        android:background="@drawable/edittext_bg"
+        android:layout_marginBottom="12dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="部门"
+        android:textSize="12sp"
+        android:textColor="#666666" />
+
+    <EditText
+        android:id="@+id/etDepartment"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:hint="请输入部门"
+        android:textSize="14sp"
+        android:paddingHorizontal="12dp"
+        android:background="@drawable/edittext_bg" />
+
+</LinearLayout>

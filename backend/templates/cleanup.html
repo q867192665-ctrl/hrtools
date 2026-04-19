@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人事管理系统 - 数据清理</title>
+    <style>
+        :root {
+            --bg-primary: #F5F7FA;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #EEF2F7;
+            --accent-primary: #1E88E5;
+            --accent-hover: #1976D2;
+            --accent-light: #E3F2FD;
+            --text-primary: #212121;
+            --text-secondary: #616161;
+            --text-tertiary: #9E9E9E;
+            --text-muted: #BDBDBD;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --error: #F44336;
+            --info: #2196F3;
+            --border-primary: #E0E0E0;
+            --border-secondary: #EEEEEE;
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 20px;
+            --space-6: 24px;
+            --space-8: 32px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            color: var(--text-primary);
+        }
+        
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-primary);
+            padding: 0 var(--space-6);
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .header-title .logo {
+            width: 32px;
+            height: 32px;
+            background: var(--error);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+        
+        .header-right span {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .btn {
+            padding: var(--space-2) var(--space-4);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-primary {
+            background: var(--accent-primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            box-shadow: 0 2px 8px rgba(30, 136, 229, 0.3);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-primary);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        
+        .btn-danger {
+            background: var(--error);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #D32F2F;
+            box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
+        }
+        
+        .btn-danger:disabled {
+            background: #FFCDD2;
+            cursor: not-allowed;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--space-6);
+        }
+        
+        .page-header {
+            margin-bottom: var(--space-6);
+        }
+        
+        .page-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-2);
+        }
+        
+        .page-header p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: var(--space-4);
+        }
+        
+        .card-header {
+            padding: var(--space-4) var(--space-5);
+            border-bottom: 1px solid var(--border-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .card-header h2 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .card-body {
+            padding: var(--space-5);
+        }
+        
+        .alert {
+            padding: var(--space-4);
+            border-radius: 6px;
+            margin-bottom: var(--space-4);
+            font-size: 14px;
+        }
+        
+        .alert-warning {
+            background: #FFF3E0;
+            border: 1px solid #FFB74D;
+            color: #E65100;
+        }
+        
+        .alert-danger {
+            background: #FFEBEE;
+            border: 1px solid #EF9A9A;
+            color: #C62828;
+        }
+        
+        .cleanup-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-4);
+            margin-bottom: var(--space-4);
+        }
+        
+        .cleanup-item {
+            background: var(--bg-tertiary);
+            padding: var(--space-4);
+            border-radius: 8px;
+            border: 1px solid var(--border-secondary);
+        }
+        
+        .cleanup-item h4 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-2);
+        }
+        
+        .cleanup-item p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-3);
+        }
+        
+        .cleanup-item .stats {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-bottom: var(--space-3);
+        }
+        
+        .danger-zone {
+            border: 2px solid var(--error);
+            border-radius: 8px;
+            padding: var(--space-5);
+            background: #FFEBEE;
+        }
+        
+        .danger-zone h3 {
+            color: var(--error);
+            font-size: 16px;
+            margin-bottom: var(--space-3);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .danger-zone p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-4);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: var(--space-6);
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--border-primary);
+            border-top-color: var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .result-message {
+            margin-top: var(--space-3);
+            padding: var(--space-3);
+            border-radius: 4px;
+            font-size: 13px;
+            display: none;
+        }
+        
+        .result-message.success {
+            background: #E8F5E9;
+            border: 1px solid #A5D6A7;
+            color: #2E7D32;
+            display: block;
+        }
+        
+        .result-message.error {
+            background: #FFEBEE;
+            border: 1px solid #EF9A9A;
+            color: #C62828;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-title">
+            <div class="logo">🗑️</div>
+            数据清理
+        </div>
+        <div class="header-right">
+            <span id="welcomeText">欢迎，管理员</span>
+            <button class="btn btn-secondary" onclick="goToMenu()">返回菜单</button>
+            <button class="btn btn-secondary" onclick="logout()">退出登录</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="page-header">
+            <h1>数据清理</h1>
+            <p>管理系统数据，清理不需要的记录和文件</p>
+        </div>
+        
+        <div class="alert alert-warning">
+            <strong>⚠️ 警告：</strong>清理操作将永久删除数据，无法恢复！请谨慎操作。
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h2>单项清理</h2>
+            </div>
+            <div class="card-body">
+                <div class="cleanup-grid">
+                    <div class="cleanup-item">
+                        <h4>💰 工资表数据</h4>
+                        <p>清空所有工资记录数据</p>
+                        <div class="stats" id="salaryStats">加载中...</div>
+                        <button class="btn btn-danger" onclick="cleanupData('salary')">清空工资表</button>
+                        <div class="result-message" id="salaryResult"></div>
+                    </div>
+                    
+                    <div class="cleanup-item">
+                        <h4>📋 客户档案表</h4>
+                        <p>清空所有客户档案记录</p>
+                        <div class="stats" id="customerStats">加载中...</div>
+                        <button class="btn btn-danger" onclick="cleanupData('customer')">清空客户档案</button>
+                        <div class="result-message" id="customerResult"></div>
+                    </div>
+                    
+                    <div class="cleanup-item">
+                        <h4>✍️ 签收记录</h4>
+                        <p>清空所有用户签收记录和签名文件</p>
+                        <div class="stats" id="signatureStats">加载中...</div>
+                        <button class="btn btn-danger" onclick="cleanupData('signature')">清空签收记录</button>
+                        <div class="result-message" id="signatureResult"></div>
+                    </div>
+                    
+                    <div class="cleanup-item">
+                        <h4>📁 缓存和临时文件</h4>
+                        <p>清空导出缓存和临时文件</p>
+                        <div class="stats" id="cacheStats">-</div>
+                        <button class="btn btn-danger" onclick="cleanupData('cache')">清空缓存</button>
+                        <div class="result-message" id="cacheResult"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="danger-zone">
+            <h3>🗑️ 一键清空所有数据</h3>
+            <p>此操作将清空工资表、客户档案、签收记录、签名文件、缓存文件等全部信息。此操作不可恢复，请务必确认！</p>
+            <button class="btn btn-danger" onclick="cleanupAllData()" style="padding: var(--space-3) var(--space-6); font-size: 14px;">一键清空所有数据</button>
+            <div class="result-message" id="allResult"></div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        © 2026 人事管理系统
+    </div>
+    
+    <script>
+        const API_BASE = window.location.origin;
+        const token = localStorage.getItem('token');
+        const username = localStorage.getItem('username');
+        const role = localStorage.getItem('role');
+        
+        if (!token) {
+            window.location.href = '/login';
+        }
+        
+        if (role !== 'admin') {
+            alert('您没有权限访问此页面');
+            window.location.href = '/menu';
+        }
+        
+        if (username) {
+            document.getElementById('welcomeText').textContent = '欢迎，' + username;
+        }
+        
+        loadStats();
+        
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/statistics`, {
+                    headers: { 'Authorization': token }
+                });
+                const result = await response.json();
+                
+                if (result.success && result.data) {
+                    document.getElementById('salaryStats').textContent = `共 ${result.data.total || 0} 条工资记录`;
+                }
+            } catch (e) {
+                document.getElementById('salaryStats').textContent = '加载失败';
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/signature-statistics`, {
+                    headers: { 'Authorization': token }
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('signatureStats').textContent = `共 ${result.data.total_files || 0} 个签名文件`;
+                }
+            } catch (e) {
+                document.getElementById('signatureStats').textContent = '加载失败';
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/customer/list`, {
+                    headers: { 'Authorization': token }
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('customerStats').textContent = `共 ${result.data?.length || 0} 条客户记录`;
+                }
+            } catch (e) {
+                document.getElementById('customerStats').textContent = '加载失败';
+            }
+        }
+        
+        function showResult(elementId, message, isSuccess) {
+            const el = document.getElementById(elementId);
+            el.textContent = message;
+            el.className = 'result-message ' + (isSuccess ? 'success' : 'error');
+            setTimeout(() => {
+                el.style.display = 'none';
+            }, 5000);
+        }
+        
+        async function cleanupData(type) {
+            const typeNames = {
+                'salary': '工资表数据',
+                'customer': '客户档案表',
+                'signature': '签收记录',
+                'cache': '缓存和临时文件'
+            };
+            
+            if (!confirm(`确定要清空${typeNames[type]}吗？此操作不可恢复！`)) {
+                return;
+            }
+            
+            const resultId = type + 'Result';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/cleanup`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': token,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ type: type })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showResult(resultId, '✓ ' + result.message, true);
+                    loadStats();
+                } else {
+                    showResult(resultId, '✗ 清理失败: ' + (result.error || '未知错误'), false);
+                }
+            } catch (error) {
+                showResult(resultId, '✗ 清理失败: ' + error.message, false);
+            }
+        }
+        
+        async function cleanupAllData() {
+            if (!confirm('⚠️ 警告：确定要清空所有数据吗？\n\n包括：\n- 工资表数据\n- 客户档案表\n- 签收记录和签名文件\n- 缓存和临时文件\n\n此操作不可恢复！')) {
+                return;
+            }
+            
+            if (!confirm('再次确认：真的要清空所有数据吗？')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/cleanup`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': token,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ type: 'all' })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showResult('allResult', '✓ ' + result.message, true);
+                    loadStats();
+                } else {
+                    showResult('allResult', '✗ 清理失败: ' + (result.error || '未知错误'), false);
+                }
+            } catch (error) {
+                showResult('allResult', '✗ 清理失败: ' + error.message, false);
+            }
+        }
+        
+        function goToMenu() {
+            window.location.href = '/menu';
+        }
+        
+        async function logout() {
+            try {
+                await fetch('/api/logout', {
+                    method: 'POST',
+                    headers: { 'Authorization': token }
+                });
+            } catch (e) {
+                console.error('Logout error:', e);
+            }
+            
+            localStorage.removeItem('token');
+            localStorage.removeItem('username');
+            localStorage.removeItem('role');
+            window.location.href = '/login';
+        }
+    </script>
+</body>
+</html>

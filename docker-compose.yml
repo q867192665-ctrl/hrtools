@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  hr-system:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      platforms:
+        - linux/arm64
+    image: hr-system:latest
+    container_name: hr-system
+    restart: unless-stopped
+    ports:
+      - "32996:32996"
+    volumes:
+      - hr-database:/app/database
+      - hr-signatures:/app/backend/signatures
+      - hr-exports:/app/backend/exports
+    environment:
+      - TZ=Asia/Shanghai
+      - DATABASE_PATH=/app/database/salary_system.db
+      - SIGNATURE_DIR=/app/backend/signatures
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:32996/api/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  hr-database:
+    name: hr-system-database
+  hr-signatures:
+    name: hr-system-signatures
+  hr-exports:
+    name: hr-system-exports

@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvWelcome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="欢迎，用户"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginBottom="16dp" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="请假申请"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/primary"
+                    android:layout_marginBottom="12dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="12dp">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="请假类型："
+                        android:textSize="14sp"
+                        android:textColor="#666666" />
+
+                    <Spinner
+                        android:id="@+id/spinnerLeaveType"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="12dp">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="开始日期："
+                        android:textSize="14sp"
+                        android:textColor="#666666" />
+
+                    <EditText
+                        android:id="@+id/etStartDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:hint="点击选择日期"
+                        android:focusable="false"
+                        android:clickable="true"
+                        android:textSize="14sp"
+                        android:textColor="@color/black"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:background="@android:drawable/edit_text" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="12dp">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="结束日期："
+                        android:textSize="14sp"
+                        android:textColor="#666666" />
+
+                    <EditText
+                        android:id="@+id/etEndDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:hint="点击选择日期"
+                        android:focusable="false"
+                        android:clickable="true"
+                        android:textSize="14sp"
+                        android:textColor="@color/black"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:background="@android:drawable/edit_text" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="12dp">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="请假天数："
+                        android:textSize="14sp"
+                        android:textColor="#666666" />
+
+                    <EditText
+                        android:id="@+id/etLeaveDays"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:hint="自动计算"
+                        android:inputType="numberDecimal"
+                        android:textSize="14sp"
+                        android:textColor="@color/black"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:background="@android:drawable/edit_text" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="请假原因："
+                        android:textSize="14sp"
+                        android:textColor="#666666"
+                        android:layout_marginBottom="6dp" />
+
+                    <EditText
+                        android:id="@+id/etReason"
+                        android:layout_width="match_parent"
+                        android:layout_height="80dp"
+                        android:hint="请输入请假原因（可选）"
+                        android:gravity="top"
+                        android:textSize="14sp"
+                        android:textColor="@color/black"
+                        android:padding="8dp"
+                        android:background="@android:drawable/edit_text" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <Button
+            android:id="@+id/btnSubmit"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="提交申请"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/btnViewRecords"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="查看记录"
+            android:textSize="16sp"
+            android:backgroundTint="#2196F3"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/btnBackToMenu"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="返回菜单"
+            android:textSize="16sp"
+            android:backgroundTint="#9E9E9E"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/btnLogout"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="退出登录"
+            android:textSize="16sp"
+            android:backgroundTint="#F44336" />
+
+    </LinearLayout>
+
+</ScrollView>
