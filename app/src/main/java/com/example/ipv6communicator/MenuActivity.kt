@@ -30,6 +30,11 @@ class MenuActivity : AppCompatActivity() {
         initViews()
         loadUserInfo()
         setupClickListeners()
+        checkForUpdate()
+    }
+
+    private fun checkForUpdate() {
+        UpdateChecker.checkForUpdate(this)
     }
 
     private fun initViews() {

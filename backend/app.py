@@ -197,6 +197,33 @@ def health_check():
     })
 
 
+# APP 版本信息（可在此处修改最新版本号）
+APP_VERSION_CODE = 2
+APP_VERSION_NAME = "1.0.2"
+APP_DOWNLOAD_URL = "http://yaohu.dynv6.net:32996/app/download"
+APP_UPDATE_MESSAGE = "发现新版本，请及时更新以获得最佳体验"
+
+@app.route('/api/app/version', methods=['GET'])
+def get_app_version():
+    """获取APP最新版本信息"""
+    return jsonify({
+        'success': True,
+        'version_code': APP_VERSION_CODE,
+        'version_name': APP_VERSION_NAME,
+        'download_url': APP_DOWNLOAD_URL,
+        'update_message': APP_UPDATE_MESSAGE
+    })
+
+
+@app.route('/app/download', methods=['GET'])
+def download_app():
+    """下载APK文件"""
+    apk_path = os.path.join(os.path.dirname(__file__), '..', 'app-release.apk')
+    if not os.path.exists(apk_path):
+        return jsonify({'success': False, 'error': 'APK文件不存在'}), 404
+    return send_file(apk_path, as_attachment=True, download_name='salary-system.apk', mimetype='application/vnd.android.package-archive')
+
+
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.json
