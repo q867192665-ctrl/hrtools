@@ -98,13 +98,13 @@ CREATE TABLE IF NOT EXISTS summary_table (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     
     -- 基础信息类（与工资表1:1映射）
-    序号 TEXT NOT NULL,
-    部门 TEXT NOT NULL,
+    序号 TEXT,
+    部门 TEXT,
     姓名 TEXT NOT NULL,
     手机号 TEXT,
     
     -- 日期类
-    入职日期 DATE NOT NULL,
+    入职日期 DATE,
     
     -- 出勤类
     应出勤天数 DECIMAL(4,1),

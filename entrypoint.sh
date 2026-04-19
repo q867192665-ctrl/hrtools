@@ -80,8 +80,8 @@ required_tables = {
         备注 TEXT, 月份 TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )''',
     'summary_table': '''CREATE TABLE summary_table (
-        id INTEGER PRIMARY KEY AUTOINCREMENT, 序号 TEXT NOT NULL, 部门 TEXT NOT NULL,
-        姓名 TEXT NOT NULL, 手机号 TEXT, 入职日期 DATE NOT NULL,
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 序号 TEXT, 部门 TEXT,
+        姓名 TEXT NOT NULL, 手机号 TEXT, 入职日期 DATE,
         应出勤天数 DECIMAL(4,1), 实际出勤天数 DECIMAL(4,1), 上门服务小时 INTEGER,
         基本工资底薪 DECIMAL(10,2), 基本工资绩效 DECIMAL(10,2), 基本工资合计 DECIMAL(10,2),
         岗位工资 DECIMAL(10,2), 护理员绩效工资 DECIMAL(10,2), 应发工资 DECIMAL(10,2),

@@ -186,8 +186,27 @@ class SignatureManager:
             conn = self.get_db_connection()
             cursor = conn.cursor()
             
+            cursor.execute(
+                "SELECT 序号, 部门, 入职日期 FROM salary_table WHERE 姓名 = ? LIMIT 1",
+                (user_name,)
+            )
+            user_info = cursor.fetchone()
+            
+            if user_info:
+                serial_no = user_info['序号'] if user_info else 'SIG'
+                department = user_info['部门'] if user_info else '待分配'
+                hire_date = user_info['入职日期'] if user_info else '2024-01-01'
+            else:
+                cursor.execute(
+                    "SELECT 部门 FROM users WHERE 姓名 = ?",
+                    (user_name,)
+                )
+                user_row = cursor.fetchone()
+                serial_no = 'SIG'
+                department = user_row['部门'] if user_row else '待分配'
+                hire_date = '2024-01-01'
+            
             if month:
-                # 如果指定了月份，更新该月份的签收状态
                 cursor.execute(
                     "SELECT id FROM summary_table WHERE 姓名 = ? AND 月份 = ?",
                     (user_name, month)
@@ -196,7 +215,6 @@ class SignatureManager:
                 existing = cursor.fetchone()
                 
                 if existing:
-                    # 更新现有记录
                     cursor.execute(
                         """UPDATE summary_table 
                            SET 签收状态 = '已签收',
@@ -208,15 +226,13 @@ class SignatureManager:
                         (datetime.now(), file_id, datetime.now(), user_name, month)
                     )
                 else:
-                    # 插入新记录（仅包含签收信息）
                     cursor.execute(
                         """INSERT INTO summary_table 
-                           (姓名, 月份, 签收状态, 最新签收时间, 签收方式, 签名图片)
-                           VALUES (?, ?, '已签收', ?, '电子签名', ?)""",
-                        (user_name, month, datetime.now(), file_id)
+                           (序号, 部门, 姓名, 入职日期, 月份, 签收状态, 最新签收时间, 签收方式, 签名图片)
+                           VALUES (?, ?, ?, ?, ?, '已签收', ?, '电子签名', ?)""",
+                        (serial_no, department, user_name, hire_date, month, datetime.now(), file_id)
                     )
             else:
-                # 如果没有指定月份，更新所有该用户的记录（向后兼容）
                 cursor.execute(
                     "SELECT id FROM summary_table WHERE 姓名 = ?",
                     (user_name,)
@@ -225,7 +241,6 @@ class SignatureManager:
                 existing = cursor.fetchone()
                 
                 if existing:
-                    # 更新现有记录
                     cursor.execute(
                         """UPDATE summary_table 
                            SET 签收状态 = '已签收',
@@ -237,12 +252,11 @@ class SignatureManager:
                         (datetime.now(), file_id, datetime.now(), user_name)
                     )
                 else:
-                    # 插入新记录（仅包含签收信息）
                     cursor.execute(
                         """INSERT INTO summary_table 
-                           (姓名, 签收状态, 最新签收时间, 签收方式, 签名图片)
-                           VALUES (?, '已签收', ?, '电子签名', ?)""",
-                        (user_name, datetime.now(), file_id)
+                           (序号, 部门, 姓名, 入职日期, 签收状态, 最新签收时间, 签收方式, 签名图片)
+                           VALUES (?, ?, ?, ?, '已签收', ?, '电子签名', ?)""",
+                        (serial_no, department, user_name, hire_date, datetime.now(), file_id)
                     )
             
             conn.commit()
