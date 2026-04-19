@@ -10,10 +10,11 @@ class DeviceManager:
         self.db_path = db_path
     
     def get_db_connection(self):
-        conn = sqlite3.connect(self.db_path, timeout=30)
+        conn = sqlite3.connect(self.db_path, timeout=60)
         conn.row_factory = sqlite3.Row
         conn.execute("PRAGMA journal_mode=WAL")
-        conn.execute("PRAGMA busy_timeout=30000")
+        conn.execute("PRAGMA busy_timeout=60000")
+        conn.execute("PRAGMA wal_checkpoint(PASSIVE)")
         return conn
     
     def bind_device(self, username: str, device_id: str, device_info: str = '') -> Tuple[bool, str]:

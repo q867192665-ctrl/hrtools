@@ -43,10 +43,11 @@ SIGNATURE_DIR = os.path.join(os.path.dirname(__file__), 'signatures')
 
 def get_db_connection():
     """获取数据库连接"""
-    conn = sqlite3.connect(DATABASE_PATH, timeout=30)
+    conn = sqlite3.connect(DATABASE_PATH, timeout=60)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode=WAL")
-    conn.execute("PRAGMA busy_timeout=30000")
+    conn.execute("PRAGMA busy_timeout=60000")
+    conn.execute("PRAGMA wal_checkpoint(PASSIVE)")
     return conn
 
 
@@ -136,6 +137,13 @@ def customer_archive_page():
 @app.route('/api/health', methods=['GET'])
 def health_check():
     """健康检查端点"""
+    try:
+        conn = get_db_connection()
+        conn.execute("PRAGMA wal_checkpoint(TRUNCATE)")
+        conn.close()
+    except:
+        pass
+    
     return jsonify({
         'status': 'ok',
         'message': '人事管理系统后端服务运行正常',

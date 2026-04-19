@@ -21,10 +21,11 @@ class SalaryManager:
     
     def get_db_connection(self):
         """获取数据库连接"""
-        conn = sqlite3.connect(self.db_path, timeout=30)
+        conn = sqlite3.connect(self.db_path, timeout=60)
         conn.row_factory = sqlite3.Row
         conn.execute("PRAGMA journal_mode=WAL")
-        conn.execute("PRAGMA busy_timeout=30000")
+        conn.execute("PRAGMA busy_timeout=60000")
+        conn.execute("PRAGMA wal_checkpoint(PASSIVE)")
         return conn
     
     def get_salary_by_name(self, name: str) -> Optional[Dict]:
