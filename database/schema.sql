@@ -145,6 +145,21 @@ CREATE TABLE IF NOT EXISTS summary_table (
     -- 月份
     月份 TEXT,
     
+    -- 额外工资项
+    基本工资其它补贴 DECIMAL(10,2),
+    交通费 DECIMAL(10,2),
+    手机费 DECIMAL(10,2),
+    奖金 DECIMAL(10,2),
+    高温费 DECIMAL(10,2),
+    应扣款项缺勤扣款 DECIMAL(10,2),
+    应扣款项养老 DECIMAL(10,2),
+    应扣款项医疗 DECIMAL(10,2),
+    应扣款项失业 DECIMAL(10,2),
+    应扣款项应缴个税 DECIMAL(10,2),
+    其它扣款 DECIMAL(10,2),
+    住宿扣款 DECIMAL(10,2),
+    水电扣款 DECIMAL(10,2),
+    
     -- 系统字段
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

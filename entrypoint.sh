@@ -90,6 +90,11 @@ required_tables = {
         是否代扣社保 BOOLEAN, 查询状态 TEXT DEFAULT '未查询', 查询次数 INTEGER DEFAULT 0,
         签收状态 TEXT DEFAULT '未签收', 最新签收时间 TIMESTAMP, 签收方式 TEXT,
         签名图片 TEXT, 查询数据编号 TEXT, 月份 TEXT,
+        基本工资其它补贴 DECIMAL(10,2), 交通费 DECIMAL(10,2), 手机费 DECIMAL(10,2),
+        奖金 DECIMAL(10,2), 高温费 DECIMAL(10,2), 应扣款项缺勤扣款 DECIMAL(10,2),
+        应扣款项养老 DECIMAL(10,2), 应扣款项医疗 DECIMAL(10,2), 应扣款项失业 DECIMAL(10,2),
+        应扣款项应缴个税 DECIMAL(10,2), 其它扣款 DECIMAL(10,2), 住宿扣款 DECIMAL(10,2),
+        水电扣款 DECIMAL(10,2),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, version INTEGER DEFAULT 1
     )''',
     'users': '''CREATE TABLE users (
