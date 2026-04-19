@@ -54,4 +54,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
 
 ENTRYPOINT ["/app/entrypoint.sh"]
 
-CMD ["gunicorn", "--bind", "[::]:32996", "--workers", "2", "--timeout", "120", "--access-logfile", "-", "app:app"]
+CMD ["gunicorn", "--bind", "[::]:32996", "--workers", "1", "--timeout", "120", "--access-logfile", "-", "app:app"]
