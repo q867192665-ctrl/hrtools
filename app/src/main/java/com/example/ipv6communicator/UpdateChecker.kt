@@ -15,7 +15,8 @@ import org.json.JSONObject
 object UpdateChecker {
 
     private val client = OkHttpClient()
-    private const val BASE_URL = "http://yaohu.dynv6.net:32996"
+    // 本地测试用局域网IP，正式环境改为 yaohu.dynv6.net
+    private const val BASE_URL = "http://172.20.16.230:32996"
     private var hasCheckedThisSession = false
 
     fun checkForUpdate(context: Context) {

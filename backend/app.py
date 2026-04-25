@@ -3996,14 +3996,36 @@ def cleanup_data():
             cursor = conn.cursor()
             cursor.execute("DELETE FROM signature_files")
             deleted_rows = cursor.rowcount
+            cursor.execute("DELETE FROM summary_table")
+            summary_deleted = cursor.rowcount
             conn.commit()
             conn.close()
-            messages.append(f'签收记录：已清空 {deleted_rows} 条记录')
+            messages.append(f'签收记录：已清空 {deleted_rows} 条签名文件记录')
+            messages.append(f'签收汇总：已清空 {summary_deleted} 条签收汇总记录')
             
             if os.path.exists(SIGNATURE_DIR):
-                shutil.rmtree(SIGNATURE_DIR)
-                os.makedirs(SIGNATURE_DIR)
-                messages.append('签名文件目录已清空')
+                deleted_files = 0
+                for filename in os.listdir(SIGNATURE_DIR):
+                    file_path = os.path.join(SIGNATURE_DIR, filename)
+                    try:
+                        if os.path.isfile(file_path):
+                            os.remove(file_path)
+                            deleted_files += 1
+                        elif os.path.isdir(file_path):
+                            import shutil
+                            shutil.rmtree(file_path)
+                    except Exception as e:
+                        print(f"[WARN] 删除文件失败: {file_path}, {e}")
+                messages.append(f'签名文件目录已清空（删除 {deleted_files} 个文件）')
+        
+        if cleanup_type in ['leave', 'all']:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM leave_records")
+            deleted_rows = cursor.rowcount
+            conn.commit()
+            conn.close()
+            messages.append(f'请假记录：已清空 {deleted_rows} 条记录')
         
         if cleanup_type in ['cache', 'all']:
             temp_dir = os.path.join(os.path.dirname(__file__), 'temp')

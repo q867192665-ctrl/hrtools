@@ -355,6 +355,14 @@
                     </div>
                     
                     <div class="cleanup-item">
+                        <h4>📅 请假记录</h4>
+                        <p>清空所有请假记录</p>
+                        <div class="stats" id="leaveStats">加载中...</div>
+                        <button class="btn btn-danger" onclick="cleanupData('leave')">清空请假记录</button>
+                        <div class="result-message" id="leaveResult"></div>
+                    </div>
+                    
+                    <div class="cleanup-item">
                         <h4>📁 缓存和临时文件</h4>
                         <p>清空导出缓存和临时文件</p>
                         <div class="stats" id="cacheStats">-</div>
@@ -367,7 +375,7 @@
         
         <div class="danger-zone">
             <h3>🗑️ 一键清空所有数据</h3>
-            <p>此操作将清空工资表、客户档案、签收记录、签名文件、缓存文件等全部信息。此操作不可恢复，请务必确认！</p>
+            <p>此操作将清空工资表、客户档案、签收记录、签名文件、请假记录、缓存文件等全部信息。此操作不可恢复，请务必确认！</p>
             <button class="btn btn-danger" onclick="cleanupAllData()" style="padding: var(--space-3) var(--space-6); font-size: 14px;">一键清空所有数据</button>
             <div class="result-message" id="allResult"></div>
         </div>
@@ -437,6 +445,19 @@
             } catch (e) {
                 document.getElementById('customerStats').textContent = '加载失败';
             }
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/leave/records`, {
+                    headers: { 'Authorization': token }
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('leaveStats').textContent = `共 ${result.data?.length || 0} 条请假记录`;
+                }
+            } catch (e) {
+                document.getElementById('leaveStats').textContent = '加载失败';
+            }
         }
         
         function showResult(elementId, message, isSuccess) {
@@ -453,6 +474,7 @@
                 'salary': '工资表数据',
                 'customer': '客户档案表',
                 'signature': '签收记录',
+                'leave': '请假记录',
                 'cache': '缓存和临时文件'
             };
             
@@ -486,7 +508,7 @@
         }
         
         async function cleanupAllData() {
-            if (!confirm('⚠️ 警告：确定要清空所有数据吗？\n\n包括：\n- 工资表数据\n- 客户档案表\n- 签收记录和签名文件\n- 缓存和临时文件\n\n此操作不可恢复！')) {
+            if (!confirm('⚠️ 警告：确定要清空所有数据吗？\n\n包括：\n- 工资表数据\n- 客户档案表\n- 签收记录和签名文件\n- 请假记录\n- 缓存和临时文件\n\n此操作不可恢复！')) {
                 return;
             }
             
