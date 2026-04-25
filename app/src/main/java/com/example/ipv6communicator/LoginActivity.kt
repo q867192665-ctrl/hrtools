@@ -176,6 +176,12 @@ class LoginActivity : AppCompatActivity() {
                             error = jsonResponse.getString("error")
                         )
                     }
+                } else if (response.code == 401 && responseBody != null) {
+                    val jsonResponse = JSONObject(responseBody)
+                    LoginResult(
+                        success = false,
+                        error = jsonResponse.optString("error", "用户名或密码错误")
+                    )
                 } else if (response.code == 403 && responseBody != null) {
                     val jsonResponse = JSONObject(responseBody)
                     LoginResult(
@@ -185,13 +191,28 @@ class LoginActivity : AppCompatActivity() {
                 } else {
                     LoginResult(
                         success = false,
-                        error = "网络请求失败"
+                        error = "网络错误"
                     )
                 }
+            } catch (e: java.net.UnknownHostException) {
+                LoginResult(
+                    success = false,
+                    error = "网络错误"
+                )
+            } catch (e: java.net.SocketTimeoutException) {
+                LoginResult(
+                    success = false,
+                    error = "网络错误"
+                )
+            } catch (e: java.net.ConnectException) {
+                LoginResult(
+                    success = false,
+                    error = "网络错误"
+                )
             } catch (e: Exception) {
                 LoginResult(
                     success = false,
-                    error = "连接服务器失败: ${e.message}"
+                    error = "网络错误"
                 )
             }
         }
