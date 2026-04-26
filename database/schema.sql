@@ -244,6 +244,42 @@ CREATE TABLE IF NOT EXISTS leave_records (
 CREATE INDEX IF NOT EXISTS idx_leave_name ON leave_records(姓名);
 
 -- ========================================
+-- 9. 签名文件表 (signature_files)
+-- ========================================
+
+CREATE TABLE IF NOT EXISTS signature_files (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    文件ID TEXT NOT NULL UNIQUE,
+    用户姓名 TEXT NOT NULL,
+    文件名 TEXT NOT NULL,
+    存储路径 TEXT NOT NULL,
+    文件格式 TEXT,
+    文件大小 INTEGER,
+    上传时间 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    文件状态 TEXT DEFAULT '正常'
+);
+
+CREATE INDEX IF NOT EXISTS idx_signature_file_id ON signature_files(文件ID);
+CREATE INDEX IF NOT EXISTS idx_signature_user ON signature_files(用户姓名);
+
+-- ========================================
+-- 10. 操作日志表 (operation_logs)
+-- ========================================
+
+CREATE TABLE IF NOT EXISTS operation_logs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    操作人 TEXT NOT NULL,
+    操作时间 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    操作类型 TEXT NOT NULL,
+    操作内容 TEXT,
+    操作结果 TEXT,
+    IP地址 TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_log_user ON operation_logs(操作人);
+CREATE INDEX IF NOT EXISTS idx_log_time ON operation_logs(操作时间);
+
+-- ========================================
 -- 初始化管理员账号
 -- ========================================
 

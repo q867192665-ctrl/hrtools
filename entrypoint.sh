@@ -231,6 +231,38 @@ if not cursor.fetchone():
     ''')
     print('[OK] login_attempts表已创建')
 
+cursor.execute(\"SELECT name FROM sqlite_master WHERE type='table' AND name='signature_files'\")
+if not cursor.fetchone():
+    cursor.execute('''
+        CREATE TABLE signature_files (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            文件ID TEXT NOT NULL UNIQUE,
+            用户姓名 TEXT NOT NULL,
+            文件名 TEXT NOT NULL,
+            存储路径 TEXT NOT NULL,
+            文件格式 TEXT,
+            文件大小 INTEGER,
+            上传时间 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            文件状态 TEXT DEFAULT '正常'
+        )
+    ''')
+    print('[OK] signature_files表已创建')
+
+cursor.execute(\"SELECT name FROM sqlite_master WHERE type='table' AND name='operation_logs'\")
+if not cursor.fetchone():
+    cursor.execute('''
+        CREATE TABLE operation_logs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            操作人 TEXT NOT NULL,
+            操作时间 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            操作类型 TEXT NOT NULL,
+            操作内容 TEXT,
+            操作结果 TEXT,
+            IP地址 TEXT
+        )
+    ''')
+    print('[OK] operation_logs表已创建')
+
 conn.commit()
 conn.close()
 print('[OK] 数据库迁移完成')
