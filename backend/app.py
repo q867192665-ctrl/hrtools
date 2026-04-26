@@ -1988,8 +1988,14 @@ def import_salary_from_excel(file_path: str, data_manager, month: str = '') -> d
     try:
         import openpyxl
         
-        wb = openpyxl.load_workbook(file_path)
-        ws = wb.active
+        wb_data_only = openpyxl.load_workbook(file_path, data_only=True)
+        ws_data_only = wb_data_only.active
+        
+        wb_formulas = openpyxl.load_workbook(file_path, data_only=False)
+        ws_formulas = wb_formulas.active
+        
+        ws = ws_data_only
+        ws_formula = ws_formulas
         
         imported_count = 0
         error_count = 0
@@ -2060,11 +2066,15 @@ def import_salary_from_excel(file_path: str, data_manager, month: str = '') -> d
         
         for col_idx in range(total_cols):
             if col_idx < J_COL_INDEX:
-                header_val = str(row1[col_idx].value) if row1[col_idx].value else ''
+                header_val1 = str(row1[col_idx].value) if row1[col_idx].value else ''
+                header_val2 = str(row2[col_idx].value) if row2[col_idx].value else ''
+                header_val = header_val1 if header_val1 and header_val1 != 'None' else header_val2
             elif col_idx < AA_COL_INDEX:
                 header_val = str(row2[col_idx].value) if row2[col_idx].value else ''
             else:
-                header_val = str(row1[col_idx].value) if row1[col_idx].value else ''
+                header_val1 = str(row1[col_idx].value) if row1[col_idx].value else ''
+                header_val2 = str(row2[col_idx].value) if row2[col_idx].value else ''
+                header_val = header_val1 if header_val1 and header_val1 != 'None' else header_val2
             
             db_field = find_db_field(header_val)
             
