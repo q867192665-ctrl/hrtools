@@ -30,7 +30,6 @@ COPY backend/templates/ /app/backend/templates/
 COPY logo.png /app/logo.png
 
 COPY database/schema.sql /app/database/schema.sql
-COPY database/init_database.py /app/database/init_database.py
 
 RUN mkdir -p /app/backend/signatures \
     /app/backend/exports \
