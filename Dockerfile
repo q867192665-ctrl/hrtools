@@ -12,7 +12,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     SIGNATURE_DIR=/app/backend/signatures
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc \
+    gcc sqlite3 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

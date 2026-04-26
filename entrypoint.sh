@@ -14,8 +14,7 @@ DB_DIR="$(dirname "$DB_PATH")"
 if [ ! -f "$DB_PATH" ]; then
     echo "[INFO] 数据库不存在，正在初始化..."
     mkdir -p "$DB_DIR"
-    cd /app/database
-    python init_database.py
+    sqlite3 "$DB_PATH" < /app/database/schema.sql
     echo "[INFO] 数据库初始化完成: $DB_PATH"
 else
     echo "[INFO] 数据库已存在: $DB_PATH"
