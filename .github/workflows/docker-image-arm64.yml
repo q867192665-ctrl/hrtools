@@ -18,11 +18,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          persist-credentials: true
-        env:
-          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -37,22 +32,30 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build Docker image
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}
+          tags: |
+            type=raw,value=latest
+            type=sha,prefix=,format=short
+
+      - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
           push: true
           platforms: linux/arm64
-          provenance: false
-          sbom: false
-          tags: |
-            ${{ env.REGISTRY }}/${{ github.repository }}:latest
-            ${{ env.REGISTRY }}/${{ github.repository }}:${{ github.sha }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Export Docker image to tar
         run: |
-          docker pull ${{ env.REGISTRY }}/${{ github.repository }}:latest
+          docker pull --platform linux/arm64 ${{ env.REGISTRY }}/${{ github.repository }}:latest
           docker save ${{ env.REGISTRY }}/${{ github.repository }}:latest -o hrtools-arm64.tar
           gzip hrtools-arm64.tar
           echo "IMAGE_FILE=hrtools-arm64.tar.gz" >> $GITHUB_ENV
@@ -83,7 +86,7 @@ jobs:
               ```
             - 运行容器：
               ```bash
-              docker run -d --name salary_system --restart unless-stopped \
+              docker run -d --name hrtools --restart unless-stopped \
                 -p 32996:32996 \
                 -v salary_data:/app/database \
                 -v salary_signatures:/app/backend/signatures \
