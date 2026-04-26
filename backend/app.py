@@ -176,6 +176,12 @@ def customer_archive_page():
     return render_template('customer_archive.html')
 
 
+@app.route('/app-update')
+def app_update_page():
+    """APP更新管理页面"""
+    return render_template('app_update.html')
+
+
 # ========================================
 # API路由
 # ========================================
@@ -4137,6 +4143,257 @@ def cleanup_data():
         import traceback
         traceback.print_exc()
         return jsonify({'success': False, 'error': f'清理失败: {str(e)}'}), 500
+
+
+# ========================================
+# APP版本管理API
+# ========================================
+
+APK_DIR = os.path.join(os.path.dirname(__file__), 'apk_files')
+os.makedirs(APK_DIR, exist_ok=True)
+
+
+def init_app_version_table():
+    conn = get_db_connection()
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS app_versions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            version TEXT NOT NULL,
+            version_name TEXT,
+            file_name TEXT NOT NULL,
+            file_path TEXT NOT NULL,
+            file_size INTEGER,
+            update_note TEXT,
+            upload_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+            is_active INTEGER DEFAULT 1
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+
+init_app_version_table()
+
+
+@app.route('/api/app-version/upload', methods=['POST'])
+@admin_required
+def upload_app_version():
+    try:
+        if 'apk' not in request.files:
+            return jsonify({'success': False, 'error': '未找到APK文件'}), 400
+        
+        file = request.files['apk']
+        if file.filename == '':
+            return jsonify({'success': False, 'error': '未选择文件'}), 400
+        
+        if not file.filename.endswith('.apk'):
+            return jsonify({'success': False, 'error': '只支持APK文件'}), 400
+        
+        version = request.form.get('version', '').strip()
+        if not version:
+            return jsonify({'success': False, 'error': '请输入版本号'}), 400
+        
+        update_note = request.form.get('update_note', '').strip()
+        
+        file_name = f'app_v{version}.apk'
+        file_path = os.path.join(APK_DIR, file_name)
+        
+        file.save(file_path)
+        file_size = os.path.getsize(file_path)
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("UPDATE app_versions SET is_active = 0")
+        
+        cursor.execute('''
+            INSERT INTO app_versions (version, version_name, file_name, file_path, file_size, update_note, is_active)
+            VALUES (?, ?, ?, ?, ?, ?, 1)
+        ''', (version, version, file_name, file_path, file_size, update_note))
+        
+        cursor.execute('''
+            DELETE FROM app_versions 
+            WHERE is_active = 0 
+            AND id NOT IN (SELECT id FROM app_versions ORDER BY upload_time DESC LIMIT 1)
+        ''')
+        
+        for old_file in cursor.execute("SELECT file_path FROM app_versions WHERE is_active = 0").fetchall():
+            old_path = old_file[0]
+            if os.path.exists(old_path) and old_path != file_path:
+                try:
+                    os.remove(old_path)
+                except:
+                    pass
+        
+        conn.commit()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'message': f'APK上传成功，版本 {version}'
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': f'上传失败: {str(e)}'}), 500
+
+
+@app.route('/api/app-version/latest', methods=['GET'])
+def get_latest_app_version():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            SELECT version, version_name, file_name, file_size, update_note, upload_time
+            FROM app_versions 
+            WHERE is_active = 1 
+            ORDER BY upload_time DESC 
+            LIMIT 1
+        ''')
+        
+        row = cursor.fetchone()
+        conn.close()
+        
+        if row:
+            return jsonify({
+                'success': True,
+                'data': {
+                    'version': row[0],
+                    'version_name': row[1],
+                    'file_name': row[2],
+                    'file_size': row[3],
+                    'update_note': row[4],
+                    'upload_time': row[5]
+                }
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '暂无APK文件'
+            })
+            
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/app-version/check', methods=['GET'])
+def check_app_update():
+    try:
+        current_version = request.args.get('version', '0.0.0')
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            SELECT version, version_name, update_note, upload_time
+            FROM app_versions 
+            WHERE is_active = 1 
+            ORDER BY upload_time DESC 
+            LIMIT 1
+        ''')
+        
+        row = cursor.fetchone()
+        conn.close()
+        
+        if row:
+            latest_version = row[0]
+            
+            def parse_version(v):
+                parts = v.split('.')
+                return tuple(int(p) for p in parts if p.isdigit())
+            
+            try:
+                current = parse_version(current_version)
+                latest = parse_version(latest_version)
+                
+                if latest > current:
+                    return jsonify({
+                        'success': True,
+                        'need_update': True,
+                        'latest_version': latest_version,
+                        'current_version': current_version,
+                        'update_note': row[2],
+                        'download_url': '/api/app-version/download'
+                    })
+                else:
+                    return jsonify({
+                        'success': True,
+                        'need_update': False,
+                        'latest_version': latest_version,
+                        'current_version': current_version
+                    })
+            except:
+                return jsonify({
+                    'success': True,
+                    'need_update': False,
+                    'latest_version': latest_version,
+                    'current_version': current_version
+                })
+        else:
+            return jsonify({
+                'success': True,
+                'need_update': False,
+                'message': '暂无可用版本'
+            })
+            
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/app-version/download', methods=['GET'])
+def download_app_version():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            SELECT file_path, file_name 
+            FROM app_versions 
+            WHERE is_active = 1 
+            ORDER BY upload_time DESC 
+            LIMIT 1
+        ''')
+        
+        row = cursor.fetchone()
+        conn.close()
+        
+        if row and os.path.exists(row[0]):
+            return send_file(row[0], as_attachment=True, download_name=row[1])
+        else:
+            return jsonify({'success': False, 'error': 'APK文件不存在'}), 404
+            
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/app-version/delete', methods=['POST'])
+@admin_required
+def delete_app_version():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            SELECT file_path FROM app_versions WHERE is_active = 1
+        ''')
+        
+        rows = cursor.fetchall()
+        
+        for row in rows:
+            if os.path.exists(row[0]):
+                os.remove(row[0])
+        
+        cursor.execute("DELETE FROM app_versions")
+        conn.commit()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'message': 'APK已删除'
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 if __name__ == '__main__':

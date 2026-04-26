@@ -204,6 +204,14 @@
             background: #F3E5F5;
         }
         
+        .menu-card.cleanup .card-icon {
+            background: #FFEBEE;
+        }
+        
+        .menu-card.app-update .card-icon {
+            background: #E8EAF6;
+        }
+        
         .menu-card h3 {
             color: var(--text-primary);
             font-size: 16px;
@@ -326,6 +334,12 @@
                     <h3>数据清理</h3>
                     <p>清空工资表、签收记录、缓存文件</p>
                 </div>
+                
+                <div class="menu-card app-update" onclick="goToAppUpdate()">
+                    <div class="card-icon">📦</div>
+                    <h3>APP更新</h3>
+                    <p>上传最新APK、版本管理、更新推送</p>
+                </div>
             </div>
         </div>
     </div>
@@ -375,6 +389,10 @@
         
         function goToCleanup() {
             window.location.href = '/cleanup';
+        }
+        
+        function goToAppUpdate() {
+            window.location.href = '/app-update';
         }
         
         async function logout() {

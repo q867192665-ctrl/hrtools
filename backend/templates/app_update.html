@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人事管理系统 - APP更新</title>
+    <style>
+        :root {
+            --bg-primary: #F5F7FA;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #EEF2F7;
+            --accent-primary: #1E88E5;
+            --accent-hover: #1976D2;
+            --accent-light: #E3F2FD;
+            --text-primary: #212121;
+            --text-secondary: #616161;
+            --text-tertiary: #9E9E9E;
+            --text-muted: #BDBDBD;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --error: #F44336;
+            --info: #2196F3;
+            --border-primary: #E0E0E0;
+            --border-secondary: #EEEEEE;
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 20px;
+            --space-6: 24px;
+            --space-8: 32px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            color: var(--text-primary);
+        }
+        
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-primary);
+            padding: 0 var(--space-6);
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .header-title .logo {
+            width: 32px;
+            height: 32px;
+            background: var(--accent-primary);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+        
+        .header-right span {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .btn {
+            padding: var(--space-2) var(--space-4);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-primary {
+            background: var(--accent-primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--border-primary);
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #43A047;
+        }
+        
+        .btn-danger {
+            background: var(--error);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #E53935;
+        }
+        
+        .main-content {
+            padding: var(--space-6);
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-6);
+        }
+        
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: 8px;
+            margin-bottom: var(--space-6);
+        }
+        
+        .card-header {
+            padding: var(--space-4) var(--space-6);
+            border-bottom: 1px solid var(--border-primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .card-header h2 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .card-body {
+            padding: var(--space-6);
+        }
+        
+        .upload-area {
+            border: 2px dashed var(--border-primary);
+            border-radius: 8px;
+            padding: var(--space-8);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--bg-tertiary);
+        }
+        
+        .upload-area:hover {
+            border-color: var(--accent-primary);
+            background: var(--accent-light);
+        }
+        
+        .upload-area.dragover {
+            border-color: var(--accent-primary);
+            background: var(--accent-light);
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: var(--space-4);
+        }
+        
+        .upload-text {
+            font-size: 16px;
+            color: var(--text-primary);
+            margin-bottom: var(--space-2);
+        }
+        
+        .upload-hint {
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+        
+        .upload-info {
+            margin-top: var(--space-4);
+            padding: var(--space-4);
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .form-group {
+            margin-bottom: var(--space-4);
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-2);
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: var(--space-3);
+            border: 1px solid var(--border-primary);
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s ease;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+        
+        .version-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+        }
+        
+        .info-item {
+            background: var(--bg-tertiary);
+            padding: var(--space-4);
+            border-radius: 6px;
+        }
+        
+        .info-item .label {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-bottom: var(--space-1);
+        }
+        
+        .info-item .value {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .info-item .value.success {
+            color: var(--success);
+        }
+        
+        .info-item .value.warning {
+            color: var(--warning);
+        }
+        
+        .current-apk {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: var(--space-4);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .apk-info {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+        
+        .apk-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--accent-light);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .apk-details h3 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-1);
+        }
+        
+        .apk-details p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .apk-actions {
+            display: flex;
+            gap: var(--space-2);
+        }
+        
+        .no-apk {
+            text-align: center;
+            padding: var(--space-8);
+            color: var(--text-tertiary);
+        }
+        
+        .no-apk .icon {
+            font-size: 48px;
+            margin-bottom: var(--space-4);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: var(--space-4);
+            display: none;
+        }
+        
+        .progress-bar.active {
+            display: block;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-primary);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: var(--space-2);
+            display: none;
+        }
+        
+        .progress-text.active {
+            display: block;
+        }
+        
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: var(--space-1) var(--space-3);
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .badge-success {
+            background: #E8F5E9;
+            color: var(--success);
+        }
+        
+        .badge-warning {
+            background: #FFF3E0;
+            color: var(--warning);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: var(--space-6);
+            color: var(--text-muted);
+            font-size: 12px;
+            border-top: 1px solid var(--border-secondary);
+            background: var(--bg-secondary);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: var(--space-4) var(--space-6);
+            border-bottom: 1px solid var(--border-primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .modal-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .modal-body {
+            padding: var(--space-6);
+        }
+        
+        .modal-footer {
+            padding: var(--space-4) var(--space-6);
+            border-top: 1px solid var(--border-primary);
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--space-3);
+        }
+        
+        .file-selected {
+            display: none;
+            margin-top: var(--space-4);
+            padding: var(--space-4);
+            background: var(--accent-light);
+            border-radius: 6px;
+        }
+        
+        .file-selected.active {
+            display: block;
+        }
+        
+        .file-selected .file-name {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .file-selected .file-size {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: var(--space-1);
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 0 var(--space-4);
+            }
+            
+            .main-content {
+                padding: var(--space-4);
+            }
+            
+            .version-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .current-apk {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--space-4);
+            }
+            
+            .apk-actions {
+                width: 100%;
+            }
+            
+            .apk-actions .btn {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-title">
+            <div class="logo">📦</div>
+            APP更新管理
+        </div>
+        <div class="header-right">
+            <span id="welcomeText">欢迎，管理员</span>
+            <button class="btn btn-secondary" onclick="goBack()">返回菜单</button>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <h1 class="page-title">APP版本管理</h1>
+        
+        <div class="card">
+            <div class="card-header">
+                <h2>当前版本信息</h2>
+            </div>
+            <div class="card-body">
+                <div class="version-info">
+                    <div class="info-item">
+                        <div class="label">当前版本</div>
+                        <div class="value" id="currentVersion">-</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">版本名称</div>
+                        <div class="value" id="versionName">-</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">更新时间</div>
+                        <div class="value" id="updateTime">-</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">文件大小</div>
+                        <div class="value" id="fileSize">-</div>
+                    </div>
+                </div>
+                
+                <div id="currentApkContainer">
+                    <div class="no-apk" id="noApkMessage">
+                        <div class="icon">📱</div>
+                        <p>暂无APK文件，请上传</p>
+                    </div>
+                    <div class="current-apk" id="currentApk" style="display: none;">
+                        <div class="apk-info">
+                            <div class="apk-icon">📦</div>
+                            <div class="apk-details">
+                                <h3 id="apkFileName">-</h3>
+                                <p id="apkFileDesc">-</p>
+                            </div>
+                        </div>
+                        <div class="apk-actions">
+                            <button class="btn btn-primary" onclick="downloadApk()">下载</button>
+                            <button class="btn btn-danger" onclick="deleteApk()">删除</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h2>上传新版本</h2>
+            </div>
+            <div class="card-body">
+                <div class="upload-area" id="uploadArea" onclick="document.getElementById('apkFileInput').click()">
+                    <div class="upload-icon">📤</div>
+                    <div class="upload-text">点击或拖拽APK文件到此处上传</div>
+                    <div class="upload-hint">支持 .apk 格式，上传后将自动替换旧版本</div>
+                </div>
+                <input type="file" id="apkFileInput" accept=".apk" style="display: none;" onchange="handleFileSelect(this)">
+                
+                <div class="file-selected" id="fileSelected">
+                    <div class="file-name" id="selectedFileName">-</div>
+                    <div class="file-size" id="selectedFileSize">-</div>
+                </div>
+                
+                <div class="form-group" style="margin-top: var(--space-4);">
+                    <label>版本号（如：1.0.0）</label>
+                    <input type="text" id="versionInput" placeholder="请输入版本号">
+                </div>
+                
+                <div class="form-group">
+                    <label>更新说明</label>
+                    <input type="text" id="updateNoteInput" placeholder="请输入更新说明（可选）">
+                </div>
+                
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+                <div class="progress-text" id="progressText">上传中...</div>
+                
+                <div style="margin-top: var(--space-4); display: flex; gap: var(--space-3);">
+                    <button class="btn btn-success" id="uploadBtn" onclick="uploadApk()" disabled>上传APK</button>
+                    <button class="btn btn-secondary" onclick="clearSelection()">清除选择</button>
+                </div>
+                
+                <div class="upload-info">
+                    <strong>📌 说明：</strong><br>
+                    • 上传新版本APK后，旧版本将被自动删除<br>
+                    • 系统仅保留最新版本的APK文件<br>
+                    • 手机端APP启动时会自动检测版本更新
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        © 2026 人事管理系统
+    </div>
+    
+    <script>
+        const token = localStorage.getItem('token');
+        const role = localStorage.getItem('role');
+        
+        if (!token || role !== 'admin') {
+            window.location.href = '/menu';
+        }
+        
+        let selectedFile = null;
+        
+        loadCurrentApk();
+        
+        async function loadCurrentApk() {
+            try {
+                const response = await fetch('/api/app-version/latest', {
+                    headers: { 'Authorization': token }
+                });
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    document.getElementById('currentVersion').textContent = 'v' + data.data.version;
+                    document.getElementById('versionName').textContent = data.data.version_name || data.data.version;
+                    document.getElementById('updateTime').textContent = data.data.upload_time || '-';
+                    document.getElementById('fileSize').textContent = formatFileSize(data.data.file_size);
+                    
+                    document.getElementById('noApkMessage').style.display = 'none';
+                    document.getElementById('currentApk').style.display = 'flex';
+                    document.getElementById('apkFileName').textContent = data.data.file_name;
+                    document.getElementById('apkFileDesc').textContent = '版本 ' + data.data.version + ' | ' + formatFileSize(data.data.file_size);
+                } else {
+                    document.getElementById('noApkMessage').style.display = 'block';
+                    document.getElementById('currentApk').style.display = 'none';
+                }
+            } catch (error) {
+                console.error('加载APK信息失败:', error);
+            }
+        }
+        
+        function handleFileSelect(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            if (!file.name.endsWith('.apk')) {
+                alert('请选择APK文件');
+                input.value = '';
+                return;
+            }
+            
+            selectedFile = file;
+            document.getElementById('selectedFileName').textContent = file.name;
+            document.getElementById('selectedFileSize').textContent = formatFileSize(file.size);
+            document.getElementById('fileSelected').classList.add('active');
+            document.getElementById('uploadBtn').disabled = false;
+            
+            const versionMatch = file.name.match(/(\d+\.\d+\.\d+)/);
+            if (versionMatch) {
+                document.getElementById('versionInput').value = versionMatch[1];
+            }
+        }
+        
+        function clearSelection() {
+            selectedFile = null;
+            document.getElementById('apkFileInput').value = '';
+            document.getElementById('fileSelected').classList.remove('active');
+            document.getElementById('versionInput').value = '';
+            document.getElementById('updateNoteInput').value = '';
+            document.getElementById('uploadBtn').disabled = true;
+        }
+        
+        async function uploadApk() {
+            if (!selectedFile) {
+                alert('请选择APK文件');
+                return;
+            }
+            
+            const version = document.getElementById('versionInput').value.trim();
+            if (!version) {
+                alert('请输入版本号');
+                return;
+            }
+            
+            const updateNote = document.getElementById('updateNoteInput').value.trim();
+            
+            const formData = new FormData();
+            formData.append('apk', selectedFile);
+            formData.append('version', version);
+            formData.append('update_note', updateNote);
+            
+            const uploadBtn = document.getElementById('uploadBtn');
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = '上传中...';
+            
+            document.getElementById('progressBar').classList.add('active');
+            document.getElementById('progressText').classList.add('active');
+            
+            try {
+                const xhr = new XMLHttpRequest();
+                
+                xhr.upload.onprogress = function(e) {
+                    if (e.lengthComputable) {
+                        const percent = Math.round((e.loaded / e.total) * 100);
+                        document.getElementById('progressFill').style.width = percent + '%';
+                        document.getElementById('progressText').textContent = '上传中... ' + percent + '%';
+                    }
+                };
+                
+                xhr.onload = function() {
+                    const data = JSON.parse(xhr.responseText);
+                    
+                    if (data.success) {
+                        alert('上传成功！');
+                        clearSelection();
+                        loadCurrentApk();
+                    } else {
+                        alert('上传失败: ' + data.error);
+                    }
+                    
+                    document.getElementById('progressBar').classList.remove('active');
+                    document.getElementById('progressText').classList.remove('active');
+                    uploadBtn.disabled = false;
+                    uploadBtn.textContent = '上传APK';
+                };
+                
+                xhr.onerror = function() {
+                    alert('上传失败，请重试');
+                    document.getElementById('progressBar').classList.remove('active');
+                    document.getElementById('progressText').classList.remove('active');
+                    uploadBtn.disabled = false;
+                    uploadBtn.textContent = '上传APK';
+                };
+                
+                xhr.open('POST', '/api/app-version/upload');
+                xhr.setRequestHeader('Authorization', token);
+                xhr.send(formData);
+                
+            } catch (error) {
+                alert('上传失败: ' + error.message);
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = '上传APK';
+            }
+        }
+        
+        function downloadApk() {
+            window.location.href = '/api/app-version/download';
+        }
+        
+        async function deleteApk() {
+            if (!confirm('确定要删除当前APK文件吗？')) return;
+            
+            try {
+                const response = await fetch('/api/app-version/delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('删除成功');
+                    loadCurrentApk();
+                } else {
+                    alert('删除失败: ' + data.error);
+                }
+            } catch (error) {
+                alert('删除失败: ' + error.message);
+            }
+        }
+        
+        function formatFileSize(bytes) {
+            if (!bytes) return '-';
+            const units = ['B', 'KB', 'MB', 'GB'];
+            let i = 0;
+            while (bytes >= 1024 && i < units.length - 1) {
+                bytes /= 1024;
+                i++;
+            }
+            return bytes.toFixed(2) + ' ' + units[i];
+        }
+        
+        function goBack() {
+            window.location.href = '/menu';
+        }
+        
+        const uploadArea = document.getElementById('uploadArea');
+        
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                document.getElementById('apkFileInput').files = files;
+                handleFileSelect(document.getElementById('apkFileInput'));
+            }
+        });
+    </script>
+</body>
+</html>
