@@ -35,22 +35,24 @@ if not row:
     cursor.execute(\"INSERT INTO users (姓名, 密码, role) VALUES (?, ?, 'admin')\", ('admin', hashed))
     conn.commit()
     print('[OK] admin用户已创建，密码: admin123')
-elif not row[1] or row[1] == '__INITIAL_PASSWORD__' or not check_password_hash(row[1], 'admin123'):
+elif not row[1] or row[1] == '__INITIAL_PASSWORD__':
     hashed = generate_password_hash('admin123')
     cursor.execute(\"UPDATE users SET 密码=? WHERE 姓名='admin'\", (hashed,))
     conn.commit()
-    print('[OK] admin密码已修复，密码: admin123')
+    print('[OK] admin密码已初始化，密码: admin123')
 else:
-    print('[OK] admin密码正常')
+    print('[OK] admin密码已设置')
 
-cursor.execute(\"SELECT 姓名, 密码 FROM users WHERE 姓名!='admin' AND role='user'\")
+cursor.execute(\"SELECT 姓名, 密码 FROM users WHERE 姓名!='admin'\")
 rows = cursor.fetchall()
 for r in rows:
-    if not r[1] or r[1] == '__INITIAL_PASSWORD__' or not check_password_hash(r[1], '123456'):
+    if not r[1] or r[1] == '__INITIAL_PASSWORD__':
         hashed = generate_password_hash('123456')
         cursor.execute(\"UPDATE users SET 密码=? WHERE 姓名=?\", (hashed, r[0]))
         conn.commit()
-        print(f'[OK] {r[0]}密码已修复，密码: 123456')
+        print(f'[OK] {r[0]}密码已初始化，密码: 123456')
+    else:
+        print(f'[OK] {r[0]}密码已设置')
 
 conn.close()
 "
