@@ -5,300 +5,721 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>人事管理系统 - 登录</title>
     <style>
-        :root {
-            --bg-primary: #F5F7FA;
-            --bg-secondary: #FFFFFF;
-            --bg-tertiary: #EEF2F7;
-            --accent-primary: #1E88E5;
-            --accent-hover: #1976D2;
-            --accent-light: #E3F2FD;
-            --text-primary: #212121;
-            --text-secondary: #616161;
-            --text-tertiary: #9E9E9E;
-            --text-muted: #BDBDBD;
-            --success: #4CAF50;
-            --warning: #FF9800;
-            --error: #F44336;
-            --border-primary: #E0E0E0;
-            --border-secondary: #EEEEEE;
-            --space-1: 4px;
-            --space-2: 8px;
-            --space-3: 12px;
-            --space-4: 16px;
-            --space-5: 20px;
-            --space-6: 24px;
-            --space-8: 32px;
-        }
-        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: "Microsoft YaHei", "PingFang SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f5f5f5;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--text-primary);
         }
-        
-        .login-wrapper {
+
+        .page {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 100vh;
+        }
+
+        .left {
+            position: relative;
             display: flex;
-            background: var(--bg-secondary);
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 48px;
+            color: white;
             overflow: hidden;
-            max-width: 900px;
-            width: 90%;
+            background: linear-gradient(135deg, #1E88E5e6, #1E88E5, #1E88E5cc);
         }
-        
-        .login-banner {
-            flex: 1;
-            background: linear-gradient(135deg, #1E88E5 0%, #1565C0 100%);
-            padding: var(--space-8);
+
+        .brand {
+            position: relative;
+            z-index: 20;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
+            gap: 8px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .brand-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .characters-area {
+            position: relative;
+            z-index: 20;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            height: 500px;
+        }
+
+        .footer-links {
+            position: relative;
+            z-index: 20;
+            display: flex;
+            gap: 32px;
+            font-size: 14px;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.6);
+            transition: color 0.2s;
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
             color: white;
-            text-align: center;
         }
-        
-        .login-banner .banner-icon {
-            width: 80px;
-            height: 80px;
-            background: rgba(255, 255, 255, 0.2);
+
+        .deco-grid {
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .deco-circle {
+            position: absolute;
             border-radius: 50%;
+            filter: blur(48px);
+        }
+
+        .deco-circle-1 {
+            top: 25%;
+            right: 25%;
+            width: 256px;
+            height: 256px;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .deco-circle-2 {
+            bottom: 25%;
+            left: 25%;
+            width: 384px;
+            height: 384px;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .right {
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 40px;
-            margin-bottom: var(--space-6);
+            padding: 32px;
+            background: #fff;
         }
-        
-        .login-banner h2 {
-            font-size: 28px;
-            font-weight: 600;
-            margin-bottom: var(--space-3);
+
+        .form-wrapper {
+            width: 100%;
+            max-width: 420px;
         }
-        
-        .login-banner p {
+
+        .mobile-brand {
+            display: none;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 30px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+        }
+
+        .header p {
+            color: #71717a;
             font-size: 14px;
-            opacity: 0.9;
-            line-height: 1.6;
         }
-        
-        .login-container {
-            flex: 1;
-            padding: var(--space-8);
+
+        .form {
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            gap: 20px;
         }
-        
-        .login-header {
-            margin-bottom: var(--space-6);
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
-        
-        .login-header h1 {
-            color: var(--text-primary);
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: var(--space-2);
-        }
-        
-        .login-header p {
-            color: var(--text-secondary);
-            font-size: 14px;
-        }
-        
-        .form-group {
-            margin-bottom: var(--space-5);
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: var(--space-2);
-            color: var(--text-secondary);
+
+        .field label {
             font-size: 14px;
             font-weight: 500;
+            color: #333;
         }
-        
-        .form-group input {
-            width: 100%;
-            padding: 12px 16px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-primary);
-            border-radius: 4px;
-            color: var(--text-primary);
+
+        .field input {
+            height: 48px;
+            padding: 0 12px;
+            border-radius: 6px;
+            border: 1px solid #d4d4d8;
             font-size: 14px;
-            font-family: inherit;
-            transition: all 0.2s ease;
-        }
-        
-        .form-group input:focus {
             outline: none;
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.1);
+            background: #fff;
+            transition: border-color 0.2s;
         }
-        
-        .form-group input::placeholder {
-            color: var(--text-tertiary);
+
+        .field input:focus {
+            border-color: #1E88E5;
+            box-shadow: 0 0 0 2px rgba(30,136,229,0.2);
         }
-        
-        .btn-login {
+
+        .password-wrap {
+            position: relative;
+        }
+
+        .password-wrap input {
             width: 100%;
-            padding: 12px 24px;
-            background: var(--accent-primary);
-            color: white;
+            padding-right: 40px;
+        }
+
+        .eye-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
             border: none;
-            border-radius: 4px;
-            font-size: 15px;
-            font-weight: 500;
-            font-family: inherit;
+            color: #a1a1aa;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: color 0.2s;
+            font-size: 20px;
         }
-        
-        .btn-login:hover {
-            background: var(--accent-hover);
-            box-shadow: 0 4px 12px rgba(30, 136, 229, 0.3);
+
+        .eye-btn:hover {
+            color: #3f3f46;
         }
-        
-        .btn-login:active {
-            background: #1565C0;
+
+        .options {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 14px;
         }
-        
-        .btn-login:disabled {
-            background: var(--text-muted);
+
+        .remember {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: #555;
+        }
+
+        .remember input {
+            width: 16px;
+            height: 16px;
+            accent-color: #1E88E5;
+        }
+
+        .error-msg {
+            padding: 12px;
+            font-size: 14px;
+            color: #f87171;
+            background: rgba(127,29,29,0.08);
+            border: 1px solid rgba(127,29,29,0.15);
+            border-radius: 8px;
+            display: none;
+        }
+
+        .btn-primary {
+            width: 100%;
+            height: 48px;
+            font-size: 16px;
+            font-weight: 500;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            transition: opacity 0.2s;
+            background: #1E88E5;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
             cursor: not-allowed;
-            box-shadow: none;
         }
-        
-        .error-message {
-            background: #FFEBEE;
-            border: 1px solid #FFCDD2;
-            color: var(--error);
-            padding: var(--space-3) var(--space-4);
-            border-radius: 4px;
-            margin-bottom: var(--space-5);
-            display: none;
-            font-size: 13px;
-        }
-        
-        .loading {
-            display: none;
-            text-align: center;
-            margin-top: var(--space-5);
-            color: var(--text-secondary);
-            font-size: 13px;
-        }
-        
-        .loading::after {
-            content: '';
-            display: inline-block;
-            width: 14px;
-            height: 14px;
-            border: 2px solid var(--border-primary);
-            border-top-color: var(--accent-primary);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-left: var(--space-2);
-            vertical-align: middle;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
+
         .footer {
             text-align: center;
-            margin-top: var(--space-6);
-            color: var(--text-muted);
-            font-size: 12px;
+            font-size: 14px;
+            color: #71717a;
+            margin-top: 32px;
         }
-        
-        @media (max-width: 768px) {
-            .login-wrapper {
-                flex-direction: column;
+
+        @media (max-width: 1023px) {
+            .page {
+                grid-template-columns: 1fr;
             }
-            
-            .login-banner {
-                padding: var(--space-6);
+
+            .left {
+                display: none;
             }
-            
-            .login-banner .banner-icon {
-                width: 60px;
-                height: 60px;
-                font-size: 30px;
+
+            .mobile-brand {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                font-size: 18px;
+                font-weight: 600;
+                margin-bottom: 48px;
+                color: #1E88E5;
             }
-            
-            .login-banner h2 {
-                font-size: 22px;
-            }
-            
-            .login-container {
-                padding: var(--space-6);
-            }
+        }
+
+        /* Characters */
+        .characters-container {
+            position: relative;
+            width: 550px;
+            height: 400px;
+        }
+
+        .char {
+            position: absolute;
+            bottom: 0;
+            transition: all 0.7s ease-in-out;
+            transform-origin: bottom center;
+        }
+
+        .purple {
+            left: 70px;
+            width: 180px;
+            background: #6C3FF5;
+            border-radius: 10px 10px 0 0;
+            z-index: 1;
+        }
+
+        .black {
+            left: 240px;
+            width: 120px;
+            height: 310px;
+            background: #2D2D2D;
+            border-radius: 8px 8px 0 0;
+            z-index: 2;
+        }
+
+        .orange {
+            left: 0;
+            width: 240px;
+            height: 200px;
+            background: #FF9B6B;
+            border-radius: 120px 120px 0 0;
+            z-index: 3;
+        }
+
+        .yellow {
+            left: 310px;
+            width: 140px;
+            height: 230px;
+            background: #E8D754;
+            border-radius: 70px 70px 0 0;
+            z-index: 4;
+        }
+
+        .eyes {
+            position: absolute;
+            display: flex;
+            transition: all 0.7s ease-in-out;
+        }
+
+        .eyeball {
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+            overflow: hidden;
+            background: white;
+        }
+
+        .pupil {
+            border-radius: 50%;
+            background: #2D2D2D;
+            transition: transform 0.1s ease-out;
+        }
+
+        .mouth {
+            position: absolute;
+            width: 80px;
+            height: 4px;
+            background: #2D2D2D;
+            border-radius: 4px;
+            transition: all 0.2s ease-out;
         }
     </style>
 </head>
 <body>
-    <div class="login-wrapper">
-        <div class="login-banner">
-            <div class="banner-icon">🏢</div>
-            <h2>人事管理系统</h2>
-            <p>高效管理企业人事信息<br>安全可靠的工资条签收平台</p>
-        </div>
-        
-        <div class="login-container">
-            <div class="login-header">
-                <h1>欢迎登录</h1>
-                <p>请输入您的账号信息</p>
+    <div class="page">
+        <div class="left">
+            <div class="brand">
+                <div class="brand-icon">&#x2728;</div>
+                <span>人事管理系统</span>
             </div>
-            
-            <div class="error-message" id="errorMessage"></div>
-            
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="username">用户名</label>
-                    <input type="text" id="username" name="username" required placeholder="请输入用户名" autocomplete="username">
+            <div class="characters-area">
+                <div class="characters-container" id="characters">
+                    <!-- Purple character -->
+                    <div class="char purple" id="purple-char">
+                        <div class="eyes" id="purple-eyes">
+                            <div class="eyeball" id="purple-eye-1" style="width:18px;height:18px;">
+                                <div class="pupil" style="width:7px;height:7px;"></div>
+                            </div>
+                            <div class="eyeball" id="purple-eye-2" style="width:18px;height:18px;">
+                                <div class="pupil" style="width:7px;height:7px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Black character -->
+                    <div class="char black" id="black-char">
+                        <div class="eyes" id="black-eyes">
+                            <div class="eyeball" id="black-eye-1" style="width:16px;height:16px;">
+                                <div class="pupil" style="width:6px;height:6px;"></div>
+                            </div>
+                            <div class="eyeball" id="black-eye-2" style="width:16px;height:16px;">
+                                <div class="pupil" style="width:6px;height:6px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Orange character -->
+                    <div class="char orange" id="orange-char">
+                        <div class="eyes" id="orange-eyes">
+                            <div class="eyeball" id="orange-eye-1" style="width:12px;height:12px;">
+                                <div class="pupil" style="width:12px;height:12px;"></div>
+                            </div>
+                            <div class="eyeball" id="orange-eye-2" style="width:12px;height:12px;">
+                                <div class="pupil" style="width:12px;height:12px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Yellow character -->
+                    <div class="char yellow" id="yellow-char">
+                        <div class="eyes" id="yellow-eyes">
+                            <div class="eyeball" id="yellow-eye-1" style="width:12px;height:12px;">
+                                <div class="pupil" style="width:12px;height:12px;"></div>
+                            </div>
+                            <div class="eyeball" id="yellow-eye-2" style="width:12px;height:12px;">
+                                <div class="pupil" style="width:12px;height:12px;"></div>
+                            </div>
+                        </div>
+                        <div class="mouth" id="yellow-mouth"></div>
+                    </div>
                 </div>
-                
-                <div class="form-group">
-                    <label for="password">密码</label>
-                    <input type="password" id="password" name="password" required placeholder="请输入密码" autocomplete="current-password">
+            </div>
+            <div class="footer-links">
+                <a href="#">隐私政策</a>
+                <a href="#">服务条款</a>
+                <a href="#">联系我们</a>
+            </div>
+            <div class="deco-grid"></div>
+            <div class="deco-circle deco-circle-1"></div>
+            <div class="deco-circle deco-circle-2"></div>
+        </div>
+        <div class="right">
+            <div class="form-wrapper">
+                <div class="mobile-brand">
+                    <div class="brand-icon">&#x2728;</div>
+                    <span>人事管理系统</span>
                 </div>
-                
-                <button type="submit" class="btn-login" id="loginBtn">登 录</button>
-            </form>
-            
-            <div class="loading" id="loading">登录中</div>
-            
-            <div class="footer">
-                © 2026 人事管理系统
+                <div class="header">
+                    <h1>欢迎登录</h1>
+                    <p>请输入您的账号信息</p>
+                </div>
+                <form id="loginForm" class="form">
+                    <div class="field">
+                        <label for="username">用户名</label>
+                        <input id="username" type="text" placeholder="请输入用户名" autocomplete="off" required />
+                    </div>
+                    <div class="field">
+                        <label for="password">密码</label>
+                        <div class="password-wrap">
+                            <input id="password" type="password" placeholder="&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;" required />
+                            <button type="button" class="eye-btn" id="togglePassword">&#x1F441;</button>
+                        </div>
+                    </div>
+                    <div class="options">
+                        <label class="remember"><input type="checkbox" id="remember" /> 记住登录状态</label>
+                    </div>
+                    <div class="error-msg" id="errorMsg"></div>
+                    <button type="submit" class="btn-primary" id="loginBtn">登 录</button>
+                </form>
+                <div class="footer">
+                    &copy; 2026 人事管理系统
+                </div>
             </div>
         </div>
     </div>
-    
+
     <script>
+        // Character animation state
+        let mouseX = 0, mouseY = 0;
+        let isPurpleBlinking = false, isBlackBlinking = false;
+        let isLookingAtEachOther = false;
+        let isPurplePeeking = false;
+        let isTyping = false;
+        let hasSecret = false;
+        let secretVisible = false;
+
+        const purpleChar = document.getElementById('purple-char');
+        const blackChar = document.getElementById('black-char');
+        const orangeChar = document.getElementById('orange-char');
+        const yellowChar = document.getElementById('yellow-char');
+
+        const purpleEyes = document.getElementById('purple-eyes');
+        const blackEyes = document.getElementById('black-eyes');
+        const orangeEyes = document.getElementById('orange-eyes');
+        const yellowEyes = document.getElementById('yellow-eyes');
+
+        const purpleEye1 = document.getElementById('purple-eye-1');
+        const purpleEye2 = document.getElementById('purple-eye-2');
+        const blackEye1 = document.getElementById('black-eye-1');
+        const blackEye2 = document.getElementById('black-eye-2');
+        const orangeEye1 = document.getElementById('orange-eye-1');
+        const orangeEye2 = document.getElementById('orange-eye-2');
+        const yellowEye1 = document.getElementById('yellow-eye-1');
+        const yellowEye2 = document.getElementById('yellow-eye-2');
+
+        const yellowMouth = document.getElementById('yellow-mouth');
+
+        const purplePos = { faceX: 0, faceY: 0, bodySkew: 0 };
+        const blackPos = { faceX: 0, faceY: 0, bodySkew: 0 };
+        const yellowPos = { faceX: 0, faceY: 0, bodySkew: 0 };
+        const orangePos = { faceX: 0, faceY: 0, bodySkew: 0 };
+
+        const hiding = () => hasSecret && secretVisible;
+        const leaning = () => isTyping || (hasSecret && !secretVisible);
+
+        function calcPos(el, target) {
+            if (!el) return;
+            const r = el.getBoundingClientRect();
+            const dx = mouseX - (r.left + r.width / 2);
+            const dy = mouseY - (r.top + r.height / 3);
+            target.faceX = Math.max(-15, Math.min(15, dx / 20));
+            target.faceY = Math.max(-10, Math.min(10, dy / 30));
+            target.bodySkew = Math.max(-6, Math.min(6, -dx / 120));
+        }
+
+        function tick() {
+            calcPos(purpleChar, purplePos);
+            calcPos(blackChar, blackPos);
+            calcPos(yellowChar, yellowPos);
+            calcPos(orangeChar, orangePos);
+
+            // Update character positions
+            const h = hiding();
+            const l = leaning();
+
+            purpleChar.style.height = l ? '440px' : '400px';
+            if (h) {
+                purpleChar.style.transform = 'skewX(0deg)';
+            } else if (l) {
+                purpleChar.style.transform = `skewX(${purplePos.bodySkew - 12}deg) translateX(40px)`;
+            } else {
+                purpleChar.style.transform = `skewX(${purplePos.bodySkew}deg)`;
+            }
+
+            if (h) {
+                blackChar.style.transform = 'skewX(0deg)';
+            } else if (isLookingAtEachOther) {
+                blackChar.style.transform = `skewX(${blackPos.bodySkew * 1.5 + 10}deg) translateX(20px)`;
+            } else if (l) {
+                blackChar.style.transform = `skewX(${blackPos.bodySkew * 1.5}deg)`;
+            } else {
+                blackChar.style.transform = `skewX(${blackPos.bodySkew}deg)`;
+            }
+
+            orangeChar.style.transform = h ? 'skewX(0deg)' : `skewX(${orangePos.bodySkew}deg)`;
+            yellowChar.style.transform = h ? 'skewX(0deg)' : `skewX(${yellowPos.bodySkew}deg)`;
+
+            // Update eye positions
+            let purpleLookX, purpleLookY, blackLookX, blackLookY;
+
+            if (h) {
+                purpleLookX = isPurplePeeking ? 4 : -4;
+                purpleLookY = isPurplePeeking ? 5 : -4;
+                blackLookX = -4;
+                blackLookY = -4;
+            } else if (isLookingAtEachOther) {
+                purpleLookX = 3;
+                purpleLookY = 4;
+                blackLookX = 0;
+                blackLookY = -4;
+            } else {
+                purpleLookX = undefined;
+                purpleLookY = undefined;
+                blackLookX = undefined;
+                blackLookY = undefined;
+            }
+
+            purpleEyes.style.left = h ? '20px' : isLookingAtEachOther ? '55px' : `${45 + purplePos.faceX}px`;
+            purpleEyes.style.top = h ? '35px' : isLookingAtEachOther ? '65px' : `${40 + purplePos.faceY}px`;
+            purpleEyes.style.gap = '32px';
+
+            blackEyes.style.left = h ? '10px' : isLookingAtEachOther ? '32px' : `${26 + blackPos.faceX}px`;
+            blackEyes.style.top = h ? '28px' : isLookingAtEachOther ? '12px' : `${32 + blackPos.faceY}px`;
+            blackEyes.style.gap = '24px';
+
+            orangeEyes.style.left = h ? '50px' : `${82 + orangePos.faceX}px`;
+            orangeEyes.style.top = h ? '85px' : `${90 + orangePos.faceY}px`;
+            orangeEyes.style.gap = '32px';
+
+            yellowEyes.style.left = h ? '20px' : `${52 + yellowPos.faceX}px`;
+            yellowEyes.style.top = h ? '35px' : `${40 + yellowPos.faceY}px`;
+            yellowEyes.style.gap = '24px';
+
+            yellowMouth.style.left = h ? '10px' : `${40 + yellowPos.faceX}px`;
+            yellowMouth.style.top = h ? '88px' : `${88 + yellowPos.faceY}px`;
+
+            // Update pupils
+            updatePupil(purpleEye1, purpleLookX, purpleLookY, 5);
+            updatePupil(purpleEye2, purpleLookX, purpleLookY, 5);
+            updatePupil(blackEye1, blackLookX, blackLookY, 4);
+            updatePupil(blackEye2, blackLookX, blackLookY, 4);
+
+            if (h) {
+                updatePupilForce(orangeEye1, -5, -4);
+                updatePupilForce(orangeEye2, -5, -4);
+                updatePupilForce(yellowEye1, -5, -4);
+                updatePupilForce(yellowEye2, -5, -4);
+            } else {
+                updatePupil(orangeEye1, undefined, undefined, 5);
+                updatePupil(orangeEye2, undefined, undefined, 5);
+                updatePupil(yellowEye1, undefined, undefined, 5);
+                updatePupil(yellowEye2, undefined, undefined, 5);
+            }
+
+            // Blinking
+            purpleEye1.style.height = isPurpleBlinking ? '2px' : '18px';
+            purpleEye2.style.height = isPurpleBlinking ? '2px' : '18px';
+            blackEye1.style.height = isBlackBlinking ? '2px' : '16px';
+            blackEye2.style.height = isBlackBlinking ? '2px' : '16px';
+
+            requestAnimationFrame(tick);
+        }
+
+        function updatePupil(eyeEl, forceX, forceY, maxDist) {
+            const pupil = eyeEl.querySelector('.pupil');
+            if (!pupil) return;
+            const eyeSize = parseFloat(eyeEl.style.width);
+            const pupilSize = parseFloat(pupil.style.width);
+
+            if (forceX !== undefined && forceY !== undefined) {
+                pupil.style.transform = `translate(${forceX}px, ${forceY}px)`;
+                return;
+            }
+
+            const r = eyeEl.getBoundingClientRect();
+            const dx = mouseX - (r.left + r.width / 2);
+            const dy = mouseY - (r.top + r.height / 2);
+            const dist = Math.min(Math.sqrt(dx * dx + dy * dy), maxDist);
+            const angle = Math.atan2(dy, dx);
+            const x = Math.cos(angle) * dist;
+            const y = Math.sin(angle) * dist;
+            pupil.style.transform = `translate(${x}px, ${y}px)`;
+        }
+
+        function updatePupilForce(eyeEl, fx, fy) {
+            const pupil = eyeEl.querySelector('.pupil');
+            if (!pupil) return;
+            pupil.style.transform = `translate(${fx}px, ${fy}px)`;
+        }
+
+        function onMouseMove(e) {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        }
+
+        function setupBlink(target) {
+            let timeout;
+            function go() {
+                timeout = setTimeout(() => {
+                    target.value = true;
+                    setTimeout(() => {
+                        target.value = false;
+                        go();
+                    }, 150);
+                }, Math.random() * 4000 + 3000);
+            }
+            go();
+            return () => clearTimeout(timeout);
+        }
+
+        // Initialize
+        window.addEventListener('mousemove', onMouseMove);
+        setupBlink({ get value() { return isPurpleBlinking; }, set value(v) { isPurpleBlinking = v; } });
+        setupBlink({ get value() { return isBlackBlinking; }, set value(v) { isBlackBlinking = v; } });
+        requestAnimationFrame(tick);
+
+        // Input event listeners
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const togglePassword = document.getElementById('togglePassword');
+
+        usernameInput.addEventListener('focus', () => {
+            isTyping = true;
+            isLookingAtEachOther = true;
+            setTimeout(() => { isLookingAtEachOther = false; }, 800);
+        });
+
+        usernameInput.addEventListener('blur', () => {
+            isTyping = false;
+            isLookingAtEachOther = false;
+        });
+
+        passwordInput.addEventListener('focus', () => {
+            isTyping = true;
+            isLookingAtEachOther = true;
+            setTimeout(() => { isLookingAtEachOther = false; }, 800);
+        });
+
+        passwordInput.addEventListener('blur', () => {
+            isTyping = false;
+            isLookingAtEachOther = false;
+        });
+
+        passwordInput.addEventListener('input', () => {
+            hasSecret = passwordInput.value.length > 0;
+        });
+
+        togglePassword.addEventListener('click', () => {
+            secretVisible = !secretVisible;
+            passwordInput.type = secretVisible ? 'text' : 'password';
+            togglePassword.textContent = secretVisible ? '\u{1F441}\u{FE0F}' : '\u{1F441}';
+        });
+
+        // Login form
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const errorMessage = document.getElementById('errorMessage');
-            const loading = document.getElementById('loading');
+
+            const username = usernameInput.value;
+            const password = passwordInput.value;
+            const errorMsg = document.getElementById('errorMsg');
             const loginBtn = document.getElementById('loginBtn');
-            
-            errorMessage.style.display = 'none';
-            loading.style.display = 'block';
+
+            errorMsg.style.display = 'none';
             loginBtn.disabled = true;
-            
+            loginBtn.textContent = '登录中...';
+
             try {
                 const response = await fetch('/api/login', {
                     method: 'POST',
@@ -310,24 +731,24 @@
                         password: password
                     })
                 });
-                
+
                 const data = await response.json();
-                
+
                 if (data.success) {
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('username', username);
                     localStorage.setItem('role', data.role);
                     window.location.href = '/menu';
                 } else {
-                    errorMessage.textContent = data.error || '登录失败';
-                    errorMessage.style.display = 'block';
+                    errorMsg.textContent = data.error || '登录失败';
+                    errorMsg.style.display = 'block';
                 }
             } catch (error) {
-                errorMessage.textContent = '连接服务器失败: ' + error.message;
-                errorMessage.style.display = 'block';
+                errorMsg.textContent = '连接服务器失败: ' + error.message;
+                errorMsg.style.display = 'block';
             } finally {
-                loading.style.display = 'none';
                 loginBtn.disabled = false;
+                loginBtn.textContent = '登 录';
             }
         });
     </script>
