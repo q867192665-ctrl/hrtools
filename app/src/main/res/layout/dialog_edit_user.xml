@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:text="手机号"
         android:textSize="12sp"
-        android:textColor="#666666" />
+        android:textColor="@color/text_secondary" />
 
     <EditText
         android:id="@+id/etPhone"
@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:text="部门"
         android:textSize="12sp"
-        android:textColor="#666666" />
+        android:textColor="@color/text_secondary" />
 
     <EditText
         android:id="@+id/etDepartment"

@@ -58,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:text="-"
                 android:textSize="11sp"
-                android:textColor="#666666"
+                android:textColor="@color/text_secondary"
                 android:fontFamily="monospace" />
 
         </LinearLayout>
@@ -82,7 +82,7 @@
                 android:layout_height="wrap_content"
                 android:text="-"
                 android:textSize="11sp"
-                android:textColor="#666666" />
+                android:textColor="@color/text_secondary" />
 
         </LinearLayout>
 

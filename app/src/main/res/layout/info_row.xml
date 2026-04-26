@@ -11,7 +11,7 @@
         android:layout_weight="1"
         android:text="标签"
         android:textSize="13sp"
-        android:textColor="#757575" />
+        android:textColor="@color/text_secondary" />
 
     <TextView
         android:id="@+id/tvValue"
@@ -19,6 +19,6 @@
         android:layout_height="wrap_content"
         android:text="--"
         android:textSize="13sp"
-        android:textColor="#1A1A1A" />
+        android:textColor="@color/text_primary" />
 
 </LinearLayout>

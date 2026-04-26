@@ -24,4 +24,8 @@
     
     <color name="border_primary">#E0E0E0</color>
     <color name="border_secondary">#EEEEEE</color>
+    
+    <color name="card_background">#FFFFFF</color>
+    <color name="dialog_background">#FFFFFF</color>
+    <color name="input_background">#F5F5F5</color>
 </resources>

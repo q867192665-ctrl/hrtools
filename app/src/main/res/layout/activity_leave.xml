@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F7FA">
+    android:background="@color/bg_primary">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -69,7 +69,7 @@
                             android:text="请假申请"
                             android:textSize="16sp"
                             android:textStyle="bold"
-                            android:textColor="#1A1A1A"
+                            android:textColor="@color/text_primary"
                             android:layout_marginBottom="16dp" />
 
                         <LinearLayout
@@ -84,7 +84,7 @@
                                 android:layout_weight="1"
                                 android:text="请假类型"
                                 android:textSize="13sp"
-                                android:textColor="#757575" />
+                                android:textColor="@color/text_secondary" />
 
                             <Spinner
                                 android:id="@+id/spinnerLeaveType"
@@ -109,7 +109,7 @@
                                 android:layout_weight="1"
                                 android:text="开始日期"
                                 android:textSize="13sp"
-                                android:textColor="#757575" />
+                                android:textColor="@color/text_secondary" />
 
                             <EditText
                                 android:id="@+id/etStartDate"
@@ -120,7 +120,7 @@
                                 android:focusable="false"
                                 android:clickable="true"
                                 android:textSize="13sp"
-                                android:textColor="#1A1A1A"
+                                android:textColor="@color/text_primary"
                                 android:paddingStart="12dp"
                                 android:paddingEnd="12dp"
                                 android:background="@drawable/spinner_bg" />
@@ -139,7 +139,7 @@
                                 android:layout_weight="1"
                                 android:text="结束日期"
                                 android:textSize="13sp"
-                                android:textColor="#757575" />
+                                android:textColor="@color/text_secondary" />
 
                             <EditText
                                 android:id="@+id/etEndDate"
@@ -150,7 +150,7 @@
                                 android:focusable="false"
                                 android:clickable="true"
                                 android:textSize="13sp"
-                                android:textColor="#1A1A1A"
+                                android:textColor="@color/text_primary"
                                 android:paddingStart="12dp"
                                 android:paddingEnd="12dp"
                                 android:background="@drawable/spinner_bg" />
@@ -169,7 +169,7 @@
                                 android:layout_weight="1"
                                 android:text="请假天数"
                                 android:textSize="13sp"
-                                android:textColor="#757575" />
+                                android:textColor="@color/text_secondary" />
 
                             <EditText
                                 android:id="@+id/etLeaveDays"
@@ -179,7 +179,7 @@
                                 android:hint="自动计算"
                                 android:inputType="numberDecimal"
                                 android:textSize="13sp"
-                                android:textColor="#1A1A1A"
+                                android:textColor="@color/text_primary"
                                 android:paddingStart="12dp"
                                 android:paddingEnd="12dp"
                                 android:background="@drawable/spinner_bg" />
@@ -196,7 +196,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="请假原因"
                                 android:textSize="13sp"
-                                android:textColor="#757575"
+                                android:textColor="@color/text_secondary"
                                 android:layout_marginBottom="8dp" />
 
                             <EditText
@@ -206,7 +206,7 @@
                                 android:hint="请输入请假原因（可选）"
                                 android:gravity="top"
                                 android:textSize="13sp"
-                                android:textColor="#1A1A1A"
+                                android:textColor="@color/text_primary"
                                 android:padding="12dp"
                                 android:background="@drawable/spinner_bg" />
 
@@ -236,7 +236,7 @@
                     app:cornerRadius="10dp"
                     app:strokeColor="#BBDEFB"
                     app:strokeWidth="1dp"
-                    app:backgroundTint="#FFFFFF"
+                    app:backgroundTint="@color/bg_secondary"
                     android:textColor="#2196F3"
                     android:layout_marginBottom="8dp" />
 
@@ -247,10 +247,10 @@
                     android:text="返回菜单"
                     android:textSize="15sp"
                     app:cornerRadius="10dp"
-                    app:strokeColor="#E0E0E0"
+                    app:strokeColor="@color/border_primary"
                     app:strokeWidth="1dp"
-                    app:backgroundTint="#FFFFFF"
-                    android:textColor="#666666"
+                    app:backgroundTint="@color/bg_secondary"
+                    android:textColor="@color/text_secondary"
                     android:layout_marginBottom="8dp" />
 
                 <com.google.android.material.button.MaterialButton
@@ -262,7 +262,7 @@
                     app:cornerRadius="10dp"
                     app:strokeColor="#FFCDD2"
                     app:strokeWidth="1dp"
-                    app:backgroundTint="#FFFFFF"
+                    app:backgroundTint="@color/bg_secondary"
                     android:textColor="#F44336"
                     android:layout_marginBottom="16dp" />
 
