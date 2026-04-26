@@ -148,11 +148,12 @@ class LoginActivity : AppCompatActivity() {
                     apply()
                 }
 
-                UpdateChecker.checkForUpdate(this@LoginActivity)
-
                 val intent = Intent(this@LoginActivity, MenuActivity::class.java)
                 startActivity(intent)
                 finish()
+
+                // 将更新检查移到跳转后，避免 Activity 被销毁导致对话框无法显示
+                // 在 MenuActivity 的 onCreate 中调用 UpdateChecker.checkForUpdate(this)
             } else {
                 showError(result.error ?: "登录失败")
             }
