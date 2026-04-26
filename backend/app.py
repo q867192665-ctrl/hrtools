@@ -78,9 +78,11 @@ from data_manager import DataManager
 from device_manager import DeviceManager
 
 app = Flask(__name__)
-app.config['TEMPLATES_AUTO_RELOAD'] = True  # 禁用模板缓存
-app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # 禁用静态文件缓存
-app.jinja_env.auto_reload = True  # 强制Jinja2重新加载模板
+app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
+app.config['REQUEST_TIMEOUT'] = 300
+app.jinja_env.auto_reload = True
 CORS(app)
 
 DATABASE_PATH = os.path.join(os.path.dirname(__file__), '..', 'database', 'salary_system.db')
@@ -1933,7 +1935,12 @@ def upload_salary_file():
         os.makedirs(temp_dir, exist_ok=True)
         
         temp_file_path = os.path.join(temp_dir, filename)
-        file.save(temp_file_path)
+        with open(temp_file_path, 'wb') as f:
+            while True:
+                chunk = file.read(8192)
+                if not chunk:
+                    break
+                f.write(chunk)
         
         clear_result = clear_month_data(month)
         
@@ -3026,7 +3033,12 @@ def upload_customer_excel():
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         saved_filename = f"customer_{timestamp}_{filename}"
         filepath = os.path.join(CUSTOMER_UPLOAD_DIR, saved_filename)
-        file.save(filepath)
+        with open(filepath, 'wb') as f:
+            while True:
+                chunk = file.read(8192)
+                if not chunk:
+                    break
+                f.write(chunk)
         
         try:
             df = pd.read_excel(filepath)
@@ -4228,7 +4240,12 @@ def upload_app_version():
         file_name = f'app_v{version}.apk'
         file_path = os.path.join(APK_DIR, file_name)
         
-        file.save(file_path)
+        with open(file_path, 'wb') as f:
+            while True:
+                chunk = file.read(8192)
+                if not chunk:
+                    break
+                f.write(chunk)
         file_size = os.path.getsize(file_path)
         
         conn = get_db_connection()
