@@ -2006,7 +2006,7 @@ def import_salary_from_excel(file_path: str, data_manager, month: str = '') -> d
             '部门': ['部门'],
             '姓名': ['姓名'],
             '入职日期': ['入职日期', '入职 日期', '入职\n日期'],
-            '是否代扣社保': ['是否代扣社保', '是否代扣\n社保', '是否\n代扣社保'],
+            '是否代扣社保': ['是否代扣社保', '是否代扣\n社保', '是否\n代扣社保', '代扣社保', '社保代扣'],
             '岗位': ['岗位'],
             '应出勤天数': ['应出勤（天）', '应出勤天数', '应出勤\n（天）'],
             '实际出勤天数': ['实际出勤（天）', '实际出勤天数', '实际出勤\n（天）'],
@@ -2045,6 +2045,18 @@ def import_salary_from_excel(file_path: str, data_manager, month: str = '') -> d
                     if normalize_header(ef) == normalized:
                         return db_field
             return None
+        
+        def parse_boolean(value):
+            if value is None:
+                return 0
+            if isinstance(value, bool):
+                return 1 if value else 0
+            if isinstance(value, (int, float)):
+                return 1 if value > 0 else 0
+            str_val = str(value).strip().upper()
+            if str_val in ['是', 'Y', 'YES', 'TRUE', '1', 'T']:
+                return 1
+            return 0
         
         def col_letter_to_index(col_letter):
             result = 0
@@ -2122,6 +2134,8 @@ def import_salary_from_excel(file_path: str, data_manager, month: str = '') -> d
                     if header and idx < len(row):
                         value = row[idx].value
                         if value is not None:
+                            if header == '是否代扣社保':
+                                value = parse_boolean(value)
                             row_data[header] = value
                 
                 cursor.execute(
