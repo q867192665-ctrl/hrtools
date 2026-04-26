@@ -74,7 +74,7 @@ class LeaveActivity : AppCompatActivity() {
         btnBackToMenu = findViewById(R.id.btnBackToMenu)
         btnLogout = findViewById(R.id.btnLogout)
 
-        val leaveTypes = arrayOf("事假", "病假", "年假", "婚假", "产假", "陪产假", "丧假", "其他")
+        val leaveTypes = arrayOf("事假", "其他")
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, leaveTypes)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerLeaveType.adapter = adapter
@@ -82,14 +82,24 @@ class LeaveActivity : AppCompatActivity() {
         etStartDate.setOnClickListener { showDatePicker(true) }
         etEndDate.setOnClickListener { showDatePicker(false) }
 
-        btnSubmit.setOnClickListener { submitLeave() }
-        btnViewRecords.setOnClickListener { viewRecords() }
+        btnSubmit.setOnClickListener { 
+            vibrate()
+            submitLeave() 
+        }
+        btnViewRecords.setOnClickListener { 
+            vibrate()
+            viewRecords() 
+        }
         btnBackToMenu.setOnClickListener { 
+            vibrate()
             val intent = Intent(this, MenuActivity::class.java)
             startActivity(intent)
             finish()
         }
-        btnLogout.setOnClickListener { performLogout(false) }
+        btnLogout.setOnClickListener { 
+            vibrate()
+            performLogout(false) 
+        }
     }
 
     private fun loadUserInfo() {
@@ -300,6 +310,20 @@ class LeaveActivity : AppCompatActivity() {
     private fun resetAutoLogoutTimer() {
         autoLogoutHandler.removeCallbacks(autoLogoutRunnable)
         startAutoLogoutTimer()
+    }
+
+    private fun vibrate() {
+        try {
+            val vibrator = getSystemService(android.content.Context.VIBRATOR_SERVICE) as android.os.Vibrator
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                vibrator.vibrate(android.os.VibrationEffect.createOneShot(50, android.os.VibrationEffect.DEFAULT_AMPLITUDE))
+            } else {
+                @Suppress("DEPRECATION")
+                vibrator.vibrate(50)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     override fun onDestroy() {

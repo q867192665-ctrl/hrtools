@@ -2,11 +2,11 @@ package com.example.ipv6communicator
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -16,7 +16,7 @@ import okhttp3.Request
 class MenuActivity : AppCompatActivity() {
 
     private lateinit var tvWelcome: TextView
-    private lateinit var btnLogout: Button
+    private lateinit var btnLogout: MaterialButton
 
     private val client = OkHttpClient()
     private var token: String = ""
@@ -48,16 +48,33 @@ class MenuActivity : AppCompatActivity() {
     private fun setupClickListeners() {
         val cardSalary = findViewById<androidx.cardview.widget.CardView>(R.id.cardSalary)
         cardSalary.setOnClickListener {
+            vibrate()
             goToSalary()
         }
 
         val cardLeave = findViewById<androidx.cardview.widget.CardView>(R.id.cardLeave)
         cardLeave.setOnClickListener {
+            vibrate()
             goToLeave()
         }
 
         btnLogout.setOnClickListener {
+            vibrate()
             logout()
+        }
+    }
+
+    private fun vibrate() {
+        try {
+            val vibrator = getSystemService(android.content.Context.VIBRATOR_SERVICE) as android.os.Vibrator
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                vibrator.vibrate(android.os.VibrationEffect.createOneShot(50, android.os.VibrationEffect.DEFAULT_AMPLITUDE))
+            } else {
+                @Suppress("DEPRECATION")
+                vibrator.vibrate(50)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 

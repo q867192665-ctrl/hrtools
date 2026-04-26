@@ -1,906 +1,554 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="@color/white">
+    android:background="#F5F7FA">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/tvWelcome"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="欢迎，用户"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:layout_marginBottom="12dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="16dp">
+            android:orientation="vertical"
+            android:background="@drawable/menu_header_bg"
+            android:padding="20dp"
+            android:paddingTop="32dp"
+            android:paddingBottom="20dp">
+
+            <TextView
+                android:id="@+id/tvWelcome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="欢迎，用户"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="选择月份："
+                android:text="工资条明细"
                 android:textSize="14sp"
-                android:textColor="#666666" />
+                android:textColor="#E0E0E0"
+                android:layout_marginTop="4dp" />
 
-            <Spinner
-                android:id="@+id/spinnerMonth"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:layout_marginStart="8dp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="16dp">
 
-            <Button
-                android:id="@+id/btnQuery"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:text="查询"
-                android:textSize="14sp"
-                android:layout_marginStart="8dp"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp" />
+                <Spinner
+                    android:id="@+id/spinnerMonth"
+                    android:layout_width="0dp"
+                    android:layout_height="44dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/spinner_bg"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnQuery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="44dp"
+                    android:text="查询"
+                    android:textSize="14sp"
+                    android:layout_marginStart="8dp"
+                    app:cornerRadius="8dp"
+                    app:backgroundTint="#FFFFFF"
+                    android:textColor="#4CAF50" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
-        <androidx.cardview.widget.CardView
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
-            android:layout_marginBottom="16dp">
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true"
+            android:padding="12dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="基本信息"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/primary"
-                    android:layout_marginBottom="12dp" />
-
-                <LinearLayout
+                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="6dp">
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp"
+                    android:layout_marginBottom="12dp">
 
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="部门："
-                        android:textSize="14sp"
-                        android:textColor="#666666" />
-
-                    <TextView
-                        android:id="@+id/tvDepartment"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="--"
-                        android:textSize="14sp"
-                        android:textColor="@color/black" />
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
-                </LinearLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="基本信息"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:textColor="#1A1A1A"
+                            android:layout_marginBottom="12dp" />
 
-                <LinearLayout
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="8dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="部门" android:textSize="13sp" android:textColor="#757575" />
+                            <TextView android:id="@+id/tvDepartment" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" android:textSize="13sp" android:textColor="#1A1A1A" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="8dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="岗位" android:textSize="13sp" android:textColor="#757575" />
+                            <TextView android:id="@+id/tvPosition" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" android:textSize="13sp" android:textColor="#1A1A1A" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="8dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="入职日期" android:textSize="13sp" android:textColor="#757575" />
+                            <TextView android:id="@+id/tvHireDate" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" android:textSize="13sp" android:textColor="#1A1A1A" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="代扣社保" android:textSize="13sp" android:textColor="#757575" />
+                            <TextView android:id="@+id/tvSocialSecurity" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" android:textSize="13sp" android:textColor="#1A1A1A" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="6dp">
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp"
+                    android:layout_marginBottom="12dp">
 
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="岗位："
-                        android:textSize="14sp"
-                        android:textColor="#666666" />
-
-                    <TextView
-                        android:id="@+id/tvPosition"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="--"
-                        android:textSize="14sp"
-                        android:textColor="@color/black" />
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
-                </LinearLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="出勤信息"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:textColor="#1A1A1A"
+                            android:layout_marginBottom="12dp" />
 
-                <LinearLayout
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="8dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="应出勤" android:textSize="13sp" android:textColor="#757575" />
+                            <TextView android:id="@+id/tvShouldAttend" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-- 天" android:textSize="13sp" android:textColor="#1A1A1A" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="8dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="实际出勤" android:textSize="13sp" android:textColor="#757575" />
+                            <TextView android:id="@+id/tvActualAttend" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-- 天" android:textSize="13sp" android:textColor="#1A1A1A" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="上门服务" android:textSize="13sp" android:textColor="#757575" />
+                            <TextView android:id="@+id/tvServiceHours" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-- 小时" android:textSize="13sp" android:textColor="#1A1A1A" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="6dp">
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp"
+                    android:layout_marginBottom="12dp">
 
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="入职日期："
-                        android:textSize="14sp"
-                        android:textColor="#666666" />
-
-                    <TextView
-                        android:id="@+id/tvHireDate"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="--"
-                        android:textSize="14sp"
-                        android:textColor="@color/black" />
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
-                </LinearLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="工资明细"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:textColor="#1A1A1A"
+                            android:layout_marginBottom="12dp" />
 
-                <LinearLayout
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="8dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="基本底薪" android:textSize="13sp" android:textColor="#757575" />
+                            <TextView android:id="@+id/tvBaseSalary" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-- 元" android:textSize="13sp" android:textColor="#1A1A1A" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="8dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="绩效工资" android:textSize="13sp" android:textColor="#757575" />
+                            <TextView android:id="@+id/tvMeritPay" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-- 元" android:textSize="13sp" android:textColor="#1A1A1A" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="8dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="其它补贴" android:textSize="13sp" android:textColor="#757575" />
+                            <TextView android:id="@+id/tvOtherSubsidy" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-- 元" android:textSize="13sp" android:textColor="#1A1A1A" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="8dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="基本工资" android:textSize="13sp" android:textColor="#757575" />
+                            <TextView android:id="@+id/tvBaseSalaryTotal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-- 元" android:textSize="13sp" android:textColor="#1A1A1A" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="8dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="岗位工资" android:textSize="13sp" android:textColor="#757575" />
+                            <TextView android:id="@+id/tvPositionSalary" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-- 元" android:textSize="13sp" android:textColor="#1A1A1A" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="8dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="护理员绩效" android:textSize="13sp" android:textColor="#757575" />
+                            <TextView android:id="@+id/tvNurseMerit" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-- 元" android:textSize="13sp" android:textColor="#1A1A1A" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="8dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="交通费" android:textSize="13sp" android:textColor="#757575" />
+                            <TextView android:id="@+id/tvTransportFee" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-- 元" android:textSize="13sp" android:textColor="#1A1A1A" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="8dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="手机费" android:textSize="13sp" android:textColor="#757575" />
+                            <TextView android:id="@+id/tvPhoneFee" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-- 元" android:textSize="13sp" android:textColor="#1A1A1A" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="8dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="奖金" android:textSize="13sp" android:textColor="#757575" />
+                            <TextView android:id="@+id/tvBonus" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-- 元" android:textSize="13sp" android:textColor="#1A1A1A" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="高温费" android:textSize="13sp" android:textColor="#757575" />
+                            <TextView android:id="@+id/tvHighTempFee" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-- 元" android:textSize="13sp" android:textColor="#1A1A1A" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="6dp">
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp"
+                    android:layout_marginBottom="12dp">
 
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="代扣社保："
-                        android:textSize="14sp"
-                        android:textColor="#666666" />
-
-                    <TextView
-                        android:id="@+id/tvSocialSecurity"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="--"
-                        android:textSize="14sp"
-                        android:textColor="@color/black" />
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
-                </LinearLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="扣款明细"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:textColor="#1A1A1A"
+                            android:layout_marginBottom="12dp" />
 
-            </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="8dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="养老保险" android:textSize="13sp" android:textColor="#757575" />
+                            <TextView android:id="@+id/tvPension" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-- 元" android:textSize="13sp" android:textColor="#F44336" />
+                        </LinearLayout>
 
-        </androidx.cardview.widget.CardView>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="8dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="医疗保险" android:textSize="13sp" android:textColor="#757575" />
+                            <TextView android:id="@+id/tvMedical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-- 元" android:textSize="13sp" android:textColor="#F44336" />
+                        </LinearLayout>
 
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
-            android:layout_marginBottom="16dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="8dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="失业保险" android:textSize="13sp" android:textColor="#757575" />
+                            <TextView android:id="@+id/tvUnemployment" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-- 元" android:textSize="13sp" android:textColor="#F44336" />
+                        </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="8dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="公积金" android:textSize="13sp" android:textColor="#757575" />
+                            <TextView android:id="@+id/tvHousingFund" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-- 元" android:textSize="13sp" android:textColor="#F44336" />
+                        </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="出勤信息"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/primary"
-                    android:layout_marginBottom="12dp" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="8dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="个人所得税" android:textSize="13sp" android:textColor="#757575" />
+                            <TextView android:id="@+id/tvTax" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-- 元" android:textSize="13sp" android:textColor="#F44336" />
+                        </LinearLayout>
 
-                <LinearLayout
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="8dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="缺勤扣款" android:textSize="13sp" android:textColor="#757575" />
+                            <TextView android:id="@+id/tvOtherDeduct" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-- 元" android:textSize="13sp" android:textColor="#F44336" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="8dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="其它扣款" android:textSize="13sp" android:textColor="#757575" />
+                            <TextView android:id="@+id/tvOtherDonation" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-- 元" android:textSize="13sp" android:textColor="#F44336" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="8dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="住宿扣款" android:textSize="13sp" android:textColor="#757575" />
+                            <TextView android:id="@+id/tvAccommodationDonation" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-- 元" android:textSize="13sp" android:textColor="#F44336" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="水电扣款" android:textSize="13sp" android:textColor="#757575" />
+                            <TextView android:id="@+id/tvUtilitiesDonation" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-- 元" android:textSize="13sp" android:textColor="#F44336" />
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#EEEEEE"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginBottom="12dp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="扣款合计" android:textSize="14sp" android:textStyle="bold" android:textColor="#1A1A1A" />
+                            <TextView android:id="@+id/tvTotalDeduct" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-- 元" android:textSize="14sp" android:textStyle="bold" android:textColor="#F44336" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="6dp">
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="4dp"
+                    app:cardBackgroundColor="#4CAF50"
+                    android:layout_marginBottom="12dp">
 
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="应出勤："
-                        android:textSize="14sp"
-                        android:textColor="#666666" />
-
-                    <TextView
-                        android:id="@+id/tvShouldAttend"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="-- 天"
-                        android:textSize="14sp"
-                        android:textColor="@color/black" />
+                        android:orientation="vertical"
+                        android:padding="20dp"
+                        android:gravity="center">
 
-                </LinearLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="实发工资"
+                            android:textSize="14sp"
+                            android:textColor="#E8F5E9" />
 
-                <LinearLayout
+                        <TextView
+                            android:id="@+id/tvNetSalary"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="¥ 0.00"
+                            android:textSize="36sp"
+                            android:textStyle="bold"
+                            android:textColor="#FFFFFF"
+                            android:layout_marginTop="8dp" />
+
+                        <TextView
+                            android:id="@+id/tvMonth"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="查询次数：0"
+                            android:textSize="12sp"
+                            android:textColor="#C8E6C9"
+                            android:layout_marginTop="8dp" />
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardSignature"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="6dp">
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp"
+                    android:layout_marginBottom="12dp">
 
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="实际出勤："
-                        android:textSize="14sp"
-                        android:textColor="#666666" />
-
-                    <TextView
-                        android:id="@+id/tvActualAttend"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="-- 天"
-                        android:textSize="14sp"
-                        android:textColor="@color/black" />
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
-                </LinearLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="签名确认"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:textColor="#1A1A1A"
+                            android:layout_marginBottom="12dp" />
 
-                <LinearLayout
+                        <TextView
+                            android:id="@+id/tvSignatureStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="状态：未签收"
+                            android:textSize="14sp"
+                            android:textColor="#F44336"
+                            android:layout_marginBottom="16dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnSubmitSignature"
+                            android:layout_width="match_parent"
+                            android:layout_height="52dp"
+                            android:text="确认签收"
+                            android:textSize="15sp"
+                            app:cornerRadius="10dp"
+                            app:backgroundTint="#4CAF50"
+                            app:rippleColor="#388E3C" />
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnBackToMenu"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="6dp">
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="上门服务："
-                        android:textSize="14sp"
-                        android:textColor="#666666" />
-
-                    <TextView
-                        android:id="@+id/tvServiceHours"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-- 小时"
-                        android:textSize="14sp"
-                        android:textColor="@color/black" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
-            android:layout_marginBottom="16dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="工资明细"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/primary"
-                    android:layout_marginBottom="12dp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="6dp">
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="基本底薪："
-                        android:textSize="14sp"
-                        android:textColor="#666666" />
-
-                    <TextView
-                        android:id="@+id/tvBaseSalary"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-- 元"
-                        android:textSize="14sp"
-                        android:textColor="@color/black" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="6dp">
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="绩效工资："
-                        android:textSize="14sp"
-                        android:textColor="#666666" />
-
-                    <TextView
-                        android:id="@+id/tvMeritPay"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-- 元"
-                        android:textSize="14sp"
-                        android:textColor="@color/black" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="6dp">
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="其它补贴："
-                        android:textSize="14sp"
-                        android:textColor="#666666" />
-
-                    <TextView
-                        android:id="@+id/tvOtherSubsidy"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-- 元"
-                        android:textSize="14sp"
-                        android:textColor="@color/black" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="6dp">
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="基本工资："
-                        android:textSize="14sp"
-                        android:textColor="#666666" />
-
-                    <TextView
-                        android:id="@+id/tvBaseSalaryTotal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-- 元"
-                        android:textSize="14sp"
-                        android:textColor="@color/black" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="6dp">
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="岗位工资："
-                        android:textSize="14sp"
-                        android:textColor="#666666" />
-
-                    <TextView
-                        android:id="@+id/tvPositionSalary"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-- 元"
-                        android:textSize="14sp"
-                        android:textColor="@color/black" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="6dp">
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="护理员绩效："
-                        android:textSize="14sp"
-                        android:textColor="#666666" />
-
-                    <TextView
-                        android:id="@+id/tvNurseMerit"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-- 元"
-                        android:textSize="14sp"
-                        android:textColor="@color/black" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="6dp">
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="交通费："
-                        android:textSize="14sp"
-                        android:textColor="#666666" />
-
-                    <TextView
-                        android:id="@+id/tvTransportFee"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-- 元"
-                        android:textSize="14sp"
-                        android:textColor="@color/black" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="6dp">
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="手机费："
-                        android:textSize="14sp"
-                        android:textColor="#666666" />
-
-                    <TextView
-                        android:id="@+id/tvPhoneFee"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-- 元"
-                        android:textSize="14sp"
-                        android:textColor="@color/black" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="6dp">
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="奖金："
-                        android:textSize="14sp"
-                        android:textColor="#666666" />
-
-                    <TextView
-                        android:id="@+id/tvBonus"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-- 元"
-                        android:textSize="14sp"
-                        android:textColor="@color/black" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="6dp">
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="高温费："
-                        android:textSize="14sp"
-                        android:textColor="#666666" />
-
-                    <TextView
-                        android:id="@+id/tvHighTempFee"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-- 元"
-                        android:textSize="14sp"
-                        android:textColor="@color/black" />
-
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#EEEEEE"
-                    android:layout_marginVertical="8dp" />
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
-            android:layout_marginBottom="16dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="扣款明细"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/error"
-                    android:layout_marginBottom="12dp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="6dp">
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="养老保险："
-                        android:textSize="14sp"
-                        android:textColor="#666666" />
-
-                    <TextView
-                        android:id="@+id/tvPension"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-- 元"
-                        android:textSize="14sp"
-                        android:textColor="@color/error" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="6dp">
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="医疗保险："
-                        android:textSize="14sp"
-                        android:textColor="#666666" />
-
-                    <TextView
-                        android:id="@+id/tvMedical"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-- 元"
-                        android:textSize="14sp"
-                        android:textColor="@color/error" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="6dp">
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="失业保险："
-                        android:textSize="14sp"
-                        android:textColor="#666666" />
-
-                    <TextView
-                        android:id="@+id/tvUnemployment"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-- 元"
-                        android:textSize="14sp"
-                        android:textColor="@color/error" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="6dp">
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="公积金："
-                        android:textSize="14sp"
-                        android:textColor="#666666" />
-
-                    <TextView
-                        android:id="@+id/tvHousingFund"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-- 元"
-                        android:textSize="14sp"
-                        android:textColor="@color/error" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="6dp">
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="个人所得税："
-                        android:textSize="14sp"
-                        android:textColor="#666666" />
-
-                    <TextView
-                        android:id="@+id/tvTax"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-- 元"
-                        android:textSize="14sp"
-                        android:textColor="@color/error" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="6dp">
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="缺勤扣款："
-                        android:textSize="14sp"
-                        android:textColor="#666666" />
-
-                    <TextView
-                        android:id="@+id/tvOtherDeduct"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-- 元"
-                        android:textSize="14sp"
-                        android:textColor="@color/error" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="6dp">
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="其它扣款："
-                        android:textSize="14sp"
-                        android:textColor="#666666" />
-
-                    <TextView
-                        android:id="@+id/tvOtherDonation"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-- 元"
-                        android:textSize="14sp"
-                        android:textColor="@color/error" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="6dp">
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="住宿扣款："
-                        android:textSize="14sp"
-                        android:textColor="#666666" />
-
-                    <TextView
-                        android:id="@+id/tvAccommodationDonation"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-- 元"
-                        android:textSize="14sp"
-                        android:textColor="@color/error" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="6dp">
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="水电扣款："
-                        android:textSize="14sp"
-                        android:textColor="#666666" />
-
-                    <TextView
-                        android:id="@+id/tvUtilitiesDonation"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-- 元"
-                        android:textSize="14sp"
-                        android:textColor="@color/error" />
-
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#EEEEEE"
-                    android:layout_marginVertical="8dp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="扣款合计："
-                        android:textSize="15sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/black" />
-
-                    <TextView
-                        android:id="@+id/tvTotalDeduct"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-- 元"
-                        android:textSize="15sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/error" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
-            app:cardBackgroundColor="#E8F5E9"
-            android:layout_marginBottom="16dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="实发工资"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/success"
+                    android:layout_height="52dp"
+                    android:text="返回菜单"
+                    android:textSize="15sp"
+                    app:cornerRadius="10dp"
+                    app:strokeColor="#E0E0E0"
+                    app:strokeWidth="1dp"
+                    app:backgroundTint="#FFFFFF"
+                    android:textColor="#666666"
                     android:layout_marginBottom="8dp" />
 
-                <TextView
-                    android:id="@+id/tvNetSalary"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="¥ 0.00"
-                    android:textSize="32sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/success" />
-
-                <TextView
-                    android:id="@+id/tvMonth"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="查询次数：0"
-                    android:textSize="12sp"
-                    android:textColor="#666666"
-                    android:layout_marginTop="8dp" />
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardSignature"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
-            android:layout_marginBottom="16dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="签名确认"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/black"
-                    android:layout_marginBottom="12dp" />
-
-                <TextView
-                    android:id="@+id/tvSignatureStatus"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="状态：未签收"
-                    android:textSize="14sp"
-                    android:textColor="@color/error"
-                    android:layout_marginBottom="12dp" />
-
-                <Button
-                    android:id="@+id/btnSubmitSignature"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnLogout"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="确认签收"
-                    android:textSize="16sp"
-                    android:textColor="@color/white"
-                    android:backgroundTint="@color/success" />
+                    android:layout_height="52dp"
+                    android:text="退出登录"
+                    android:textSize="15sp"
+                    app:cornerRadius="10dp"
+                    app:strokeColor="#FFCDD2"
+                    app:strokeWidth="1dp"
+                    app:backgroundTint="#FFFFFF"
+                    android:textColor="#F44336"
+                    android:layout_marginBottom="16dp" />
 
             </LinearLayout>
 
-        </androidx.cardview.widget.CardView>
-
-        <Button
-            android:id="@+id/btnBackToMenu"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:text="返回菜单"
-            android:textSize="16sp"
-            android:textColor="@color/white"
-            android:backgroundTint="#2196F3"
-            android:layout_marginBottom="8dp" />
-
-        <Button
-            android:id="@+id/btnLogout"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:text="退出登录"
-            android:textSize="16sp"
-            android:textColor="@color/white"
-            android:backgroundTint="@color/gray" />
+        </ScrollView>
 
     </LinearLayout>
 
-</ScrollView>
+</RelativeLayout>

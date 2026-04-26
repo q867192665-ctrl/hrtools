@@ -3,13 +3,14 @@ package com.example.ipv6communicator
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
-import android.widget.Button
 import android.widget.CheckBox
-import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -21,10 +22,10 @@ import java.security.MessageDigest
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var etUsername: EditText
-    private lateinit var etPassword: EditText
+    private lateinit var etUsername: TextInputEditText
+    private lateinit var etPassword: TextInputEditText
     private lateinit var cbRememberPassword: CheckBox
-    private lateinit var btnLogin: Button
+    private lateinit var btnLogin: MaterialButton
     private lateinit var progressBar: ProgressBar
     private lateinit var tvError: TextView
 
@@ -76,7 +77,22 @@ class LoginActivity : AppCompatActivity() {
 
     private fun setupClickListeners() {
         btnLogin.setOnClickListener {
+            vibrate()
             performLogin()
+        }
+    }
+
+    private fun vibrate() {
+        try {
+            val vibrator = getSystemService(android.content.Context.VIBRATOR_SERVICE) as android.os.Vibrator
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                vibrator.vibrate(android.os.VibrationEffect.createOneShot(50, android.os.VibrationEffect.DEFAULT_AMPLITUDE))
+            } else {
+                @Suppress("DEPRECATION")
+                vibrator.vibrate(50)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 

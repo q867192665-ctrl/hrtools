@@ -12,11 +12,13 @@ object UpdateChecker {
 
     private val client = OkHttpClient()
     private const val BASE_URL = "http://yaohu.dynv6.net:32996"
-    private var hasCheckedThisSession = false
+    private var lastCheckTime: Long = 0
+    private const val CHECK_INTERVAL_MS = 30 * 60 * 1000L // 30分钟检查一次
 
     fun checkForUpdate(context: Context) {
-        if (hasCheckedThisSession) return
-        hasCheckedThisSession = true
+        val now = System.currentTimeMillis()
+        if (now - lastCheckTime < CHECK_INTERVAL_MS) return
+        lastCheckTime = now
 
         val currentVersion = getCurrentVersion(context)
         
@@ -27,7 +29,7 @@ object UpdateChecker {
 
         client.newCall(request).enqueue(object : okhttp3.Callback {
             override fun onFailure(call: okhttp3.Call, e: java.io.IOException) {
-                e.printStackTrace()
+                android.util.Log.e("UpdateChecker", "检查更新失败", e)
             }
 
             override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
@@ -44,15 +46,22 @@ object UpdateChecker {
                                     val updateNote = json.optString("update_note", "有新版本可用")
                                     val downloadUrl = json.getString("download_url")
 
+                                    android.util.Log.d("UpdateChecker", "发现新版本: $latestVersion")
+
                                     android.os.Handler(android.os.Looper.getMainLooper()).post {
                                         showUpdateDialog(context, latestVersion, downloadUrl, updateNote)
                                     }
+                                } else {
+                                    val latestVersion = json.optString("latest_version", "未知")
+                                    android.util.Log.d("UpdateChecker", "已是最新版本，当前: $currentVersion, 服务器: $latestVersion")
                                 }
                             }
                         } catch (e: Exception) {
-                            e.printStackTrace()
+                            android.util.Log.e("UpdateChecker", "解析更新响应失败", e)
                         }
                     }
+                } else {
+                    android.util.Log.e("UpdateChecker", "检查更新请求失败，HTTP状态码: ${response.code}")
                 }
             }
         })

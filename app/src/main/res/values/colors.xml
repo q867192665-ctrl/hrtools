@@ -3,10 +3,10 @@
     <color name="primary">#1E88E5</color>
     <color name="primary_dark">#1976D2</color>
     <color name="accent">#1E88E5</color>
-    <color name="success">#4CAF50</color>
+    <color name="success">#2196F3</color>
     <color name="warning">#FF9800</color>
     <color name="error">#F44336</color>
-    <color name="info">#2196F3</color>
+    <color name="info">#1E88E5</color>
     <color name="purple">#9C27B0</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>

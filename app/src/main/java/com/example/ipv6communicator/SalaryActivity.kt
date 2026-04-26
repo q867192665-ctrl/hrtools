@@ -7,12 +7,12 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.widget.ArrayAdapter
-import android.widget.Button
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -57,10 +57,10 @@ class SalaryActivity : AppCompatActivity() {
     private lateinit var tvMonth: TextView
     private lateinit var tvSignatureStatus: TextView
     private lateinit var spinnerMonth: Spinner
-    private lateinit var btnQuery: Button
-    private lateinit var btnSubmitSignature: Button
-    private lateinit var btnBackToMenu: Button
-    private lateinit var btnLogout: Button
+    private lateinit var btnQuery: MaterialButton
+    private lateinit var btnSubmitSignature: MaterialButton
+    private lateinit var btnBackToMenu: MaterialButton
+    private lateinit var btnLogout: MaterialButton
 
     private val client = OkHttpClient()
     private val baseUrl = "http://yaohu.dynv6.net:32996"
@@ -154,10 +154,22 @@ class SalaryActivity : AppCompatActivity() {
         btnBackToMenu = findViewById(R.id.btnBackToMenu)
         btnLogout = findViewById(R.id.btnLogout)
 
-        btnQuery.setOnClickListener { querySalaryByMonth() }
-        btnSubmitSignature.setOnClickListener { submitSignature() }
-        btnBackToMenu.setOnClickListener { backToMenu() }
-        btnLogout.setOnClickListener { logout() }
+        btnQuery.setOnClickListener { 
+            vibrate()
+            querySalaryByMonth() 
+        }
+        btnSubmitSignature.setOnClickListener { 
+            vibrate()
+            submitSignature() 
+        }
+        btnBackToMenu.setOnClickListener { 
+            vibrate()
+            backToMenu() 
+        }
+        btnLogout.setOnClickListener { 
+            vibrate()
+            logout() 
+        }
     }
 
     private fun submitSignature() {
@@ -438,6 +450,20 @@ class SalaryActivity : AppCompatActivity() {
     
     private fun stopAutoLogoutTimer() {
         autoLogoutHandler.removeCallbacks(autoLogoutRunnable)
+    }
+
+    private fun vibrate() {
+        try {
+            val vibrator = getSystemService(android.content.Context.VIBRATOR_SERVICE) as android.os.Vibrator
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                vibrator.vibrate(android.os.VibrationEffect.createOneShot(50, android.os.VibrationEffect.DEFAULT_AMPLITUDE))
+            } else {
+                @Suppress("DEPRECATION")
+                vibrator.vibrate(50)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     data class SalaryData(

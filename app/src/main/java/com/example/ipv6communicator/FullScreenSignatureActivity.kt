@@ -59,9 +59,18 @@ class FullScreenSignatureActivity : AppCompatActivity() {
         btnCancel = findViewById(R.id.btnCancel)
         tvInstruction = findViewById(R.id.tvInstruction)
 
-        btnClear.setOnClickListener { clearSignature() }
-        btnConfirm.setOnClickListener { submitSignature() }
-        btnCancel.setOnClickListener { cancelSignature() }
+        btnClear.setOnClickListener { 
+            vibrate()
+            clearSignature() 
+        }
+        btnConfirm.setOnClickListener { 
+            vibrate()
+            submitSignature() 
+        }
+        btnCancel.setOnClickListener { 
+            vibrate()
+            cancelSignature() 
+        }
 
         // 设置签名区域为全屏
         signatureView.setFullScreenMode(true)
@@ -168,6 +177,20 @@ class FullScreenSignatureActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         cancelSignature()
+    }
+
+    private fun vibrate() {
+        try {
+            val vibrator = getSystemService(android.content.Context.VIBRATOR_SERVICE) as android.os.Vibrator
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                vibrator.vibrate(android.os.VibrationEffect.createOneShot(50, android.os.VibrationEffect.DEFAULT_AMPLITUDE))
+            } else {
+                @Suppress("DEPRECATION")
+                vibrator.vibrate(50)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     data class UploadResult(
