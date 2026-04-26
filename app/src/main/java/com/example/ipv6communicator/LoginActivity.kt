@@ -28,6 +28,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var btnLogin: MaterialButton
     private lateinit var progressBar: ProgressBar
     private lateinit var tvError: TextView
+    private lateinit var tvVersion: TextView
 
     private val client = OkHttpClient()
     private val baseUrl = "http://yaohu.dynv6.net:32996"
@@ -48,6 +49,14 @@ class LoginActivity : AppCompatActivity() {
         btnLogin = findViewById(R.id.btnLogin)
         progressBar = findViewById(R.id.progressBar)
         tvError = findViewById(R.id.tvError)
+        tvVersion = findViewById(R.id.tvVersion)
+        
+        val versionName = try {
+            packageManager.getPackageInfo(packageName, 0).versionName
+        } catch (e: Exception) {
+            "1.0.5"
+        }
+        tvVersion.text = "© 2026 人事管理系统 v$versionName"
     }
 
     private fun generateDeviceId(): String {

@@ -223,8 +223,8 @@
                     android:text="提交申请"
                     android:textSize="15sp"
                     app:cornerRadius="10dp"
-                    app:backgroundTint="#4CAF50"
-                    app:rippleColor="#388E3C"
+                    app:backgroundTint="#1E88E5"
+                    app:rippleColor="#1565C0"
                     android:layout_marginBottom="8dp" />
 
                 <com.google.android.material.button.MaterialButton

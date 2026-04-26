@@ -61,7 +61,7 @@
                     android:layout_marginStart="8dp"
                     app:cornerRadius="8dp"
                     app:backgroundTint="#FFFFFF"
-                    android:textColor="#4CAF50" />
+                    android:textColor="#1E88E5" />
 
             </LinearLayout>
 
@@ -433,7 +433,7 @@
                     android:layout_height="wrap_content"
                     app:cardCornerRadius="16dp"
                     app:cardElevation="4dp"
-                    app:cardBackgroundColor="#4CAF50"
+                    app:cardBackgroundColor="#1E88E5"
                     android:layout_marginBottom="12dp">
 
                     <LinearLayout
@@ -512,8 +512,8 @@
                             android:text="确认签收"
                             android:textSize="15sp"
                             app:cornerRadius="10dp"
-                            app:backgroundTint="#4CAF50"
-                            app:rippleColor="#388E3C" />
+                            app:backgroundTint="#1E88E5"
+                            app:rippleColor="#1565C0" />
 
                     </LinearLayout>
 

@@ -36,7 +36,7 @@
                 android:text="普通用户"
                 android:textSize="11sp"
                 android:textColor="@color/white"
-                android:background="#4CAF50"
+                android:background="#1E88E5"
                 android:paddingHorizontal="6dp"
                 android:paddingVertical="2dp" />
 
