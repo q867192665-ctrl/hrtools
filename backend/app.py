@@ -2056,6 +2056,7 @@ def import_salary_from_excel(file_path: str, data_manager, month: str = '') -> d
         
         total_cols = len(row1)
         headers = []
+        skip_columns = set()
         
         for col_idx in range(total_cols):
             if col_idx < J_COL_INDEX:
@@ -2066,7 +2067,12 @@ def import_salary_from_excel(file_path: str, data_manager, month: str = '') -> d
                 header_val = str(row1[col_idx].value) if row1[col_idx].value else ''
             
             db_field = find_db_field(header_val)
-            headers.append(db_field if db_field else normalize_header(header_val))
+            
+            if not header_val or header_val == 'None' or header_val.strip() == '':
+                skip_columns.add(col_idx)
+                headers.append(None)
+            else:
+                headers.append(db_field if db_field else normalize_header(header_val))
         
         name_col_idx = None
         for idx, h in enumerate(headers):
