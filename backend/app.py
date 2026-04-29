@@ -4454,6 +4454,7 @@ def delete_app_version():
 @admin_required
 def export_all_data():
     try:
+        import zipfile
         conn = get_db_connection()
         cursor = conn.cursor()
 
@@ -4462,7 +4463,7 @@ def export_all_data():
 
         export_data = {
             'export_time': datetime.now().isoformat(),
-            'export_version': '1.0',
+            'export_version': '2.0',
             'tables': {}
         }
 
@@ -4495,16 +4496,31 @@ def export_all_data():
 
         conn.close()
 
-        json_str = json.dumps(export_data, ensure_ascii=False, indent=2, default=str)
-
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        filename = f"full_backup_{timestamp}.json"
+        filename = f"full_backup_{timestamp}.zip"
+
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zf:
+            json_str = json.dumps(export_data, ensure_ascii=False, indent=2, default=str)
+            zf.writestr('data.json', json_str)
+            
+            if os.path.exists(SIGNATURE_DIR):
+                signature_count = 0
+                for root, dirs, files in os.walk(SIGNATURE_DIR):
+                    for file in files:
+                        file_path = os.path.join(root, file)
+                        arcname = os.path.relpath(file_path, SIGNATURE_DIR)
+                        zf.write(file_path, os.path.join('signatures', arcname))
+                        signature_count += 1
+                print(f"[INFO] 导出签名图片: {signature_count} 个文件")
+
+        zip_buffer.seek(0)
 
         return send_file(
-            io.BytesIO(json_str.encode('utf-8')),
+            zip_buffer,
             as_attachment=True,
             download_name=filename,
-            mimetype='application/json'
+            mimetype='application/zip'
         )
 
     except Exception as e:
@@ -4515,6 +4531,7 @@ def export_all_data():
 @admin_required
 def import_all_data():
     try:
+        import zipfile
         if 'file' not in request.files:
             return jsonify({'success': False, 'error': '未找到上传文件'}), 400
 
@@ -4522,13 +4539,39 @@ def import_all_data():
         if file.filename == '':
             return jsonify({'success': False, 'error': '未选择文件'}), 400
 
-        if not file.filename.endswith('.json'):
-            return jsonify({'success': False, 'error': '仅支持JSON格式文件'}), 400
-
         import_mode = request.form.get('mode', 'merge')
+        filename = file.filename.lower()
+        
+        import_data = None
+        signature_restored = 0
 
-        content = file.read().decode('utf-8')
-        import_data = json.loads(content)
+        if filename.endswith('.zip'):
+            file_content = file.read()
+            zip_buffer = io.BytesIO(file_content)
+            
+            with zipfile.ZipFile(zip_buffer, 'r') as zf:
+                if 'data.json' not in zf.namelist():
+                    return jsonify({'success': False, 'error': 'ZIP文件中未找到data.json'}), 400
+                
+                json_content = zf.read('data.json').decode('utf-8')
+                import_data = json.loads(json_content)
+                
+                ensure_signature_dir()
+                for member in zf.namelist():
+                    if member.startswith('signatures/') and not member.endswith('/'):
+                        target_path = os.path.join(SIGNATURE_DIR, os.path.basename(member))
+                        os.makedirs(os.path.dirname(target_path), exist_ok=True)
+                        with zf.open(member) as source, open(target_path, 'wb') as target:
+                            target.write(source.read())
+                        signature_restored += 1
+                
+                print(f"[INFO] 恢复签名图片: {signature_restored} 个文件")
+
+        elif filename.endswith('.json'):
+            content = file.read().decode('utf-8')
+            import_data = json.loads(content)
+        else:
+            return jsonify({'success': False, 'error': '仅支持ZIP或JSON格式文件'}), 400
 
         if 'tables' not in import_data:
             return jsonify({'success': False, 'error': '无效的备份文件格式'}), 400
@@ -4633,9 +4676,10 @@ def import_all_data():
 
         return jsonify({
             'success': True,
-            'message': f'导入完成: 成功 {total_imported} 条, 失败 {total_errors} 条',
+            'message': f'导入完成: 数据库 {total_imported} 条, 签名图片 {signature_restored} 个',
             'total_imported': total_imported,
             'total_errors': total_errors,
+            'signatures_restored': signature_restored,
             'details': results
         })
 

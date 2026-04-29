@@ -356,7 +356,7 @@
                 <div class="card-icon export">📤</div>
                 <div>
                     <div class="card-title">数据导出</div>
-                    <div class="card-desc">将所有用户和数据库数据导出为JSON备份文件</div>
+                    <div class="card-desc">导出数据库数据及用户签名图片为ZIP备份文件</div>
                 </div>
             </div>
             
@@ -377,14 +377,14 @@
                 <div class="card-icon import">📥</div>
                 <div>
                     <div class="card-title">数据导入</div>
-                    <div class="card-desc">从JSON备份文件恢复数据到系统数据库</div>
+                    <div class="card-desc">从备份文件恢复数据和签名图片</div>
                 </div>
             </div>
             
             <div class="file-input-wrapper">
-                <input type="file" id="fileInput" class="file-input" accept=".json" onchange="handleFileSelect(event)">
+                <input type="file" id="fileInput" class="file-input" accept=".zip,.json" onchange="handleFileSelect(event)">
                 <label for="fileInput" class="file-label" id="fileLabel">
-                    <span>📁 点击选择备份文件 (.json)</span>
+                    <span>📁 点击选择备份文件 (.zip 或 .json)</span>
                 </label>
             </div>
             
@@ -408,7 +408,9 @@
         <div class="notice-card">
             <h3>⚠️ 注意事项</h3>
             <ul>
-                <li>导出操作会将所有数据库表数据导出为JSON文件</li>
+                <li><strong>导出内容</strong>：数据库所有表数据 + 用户签名图片</li>
+                <li><strong>导出格式</strong>：ZIP压缩包（内含data.json和signatures文件夹）</li>
+                <li><strong>导入支持</strong>：ZIP格式（含签名图片）或 JSON格式（仅数据）</li>
                 <li>导入操作会向数据库中插入或更新数据</li>
                 <li>导入前建议先执行一次导出备份</li>
                 <li>导入操作不可撤销，请谨慎操作</li>
@@ -450,14 +452,16 @@
         function handleFileSelect(event) {
             const file = event.target.files[0];
             if (file) {
-                if (!file.name.endsWith('.json')) {
-                    alert('请选择JSON格式的备份文件');
+                const ext = file.name.toLowerCase();
+                if (!ext.endsWith('.json') && !ext.endsWith('.zip')) {
+                    alert('请选择 JSON 或 ZIP 格式的备份文件');
                     return;
                 }
                 selectedFile = file;
                 const fileLabel = document.getElementById('fileLabel');
                 fileLabel.classList.add('has-file');
-                fileLabel.innerHTML = '<span>📄 ' + file.name + '</span>';
+                const icon = ext.endsWith('.zip') ? '📦' : '📄';
+                fileLabel.innerHTML = '<span>' + icon + ' ' + file.name + '</span>';
                 document.getElementById('btnImport').disabled = false;
             }
         }
@@ -493,7 +497,7 @@
                 
                 // 获取文件名
                 const contentDisposition = response.headers.get('Content-Disposition');
-                let filename = 'full_backup.json';
+                let filename = 'full_backup.zip';
                 if (contentDisposition) {
                     const match = contentDisposition.match(/filename="?([^"]+)"?/);
                     if (match) filename = match[1];
