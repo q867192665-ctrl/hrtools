@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据管理 - 人事管理系统</title>
+    <style>
+        :root {
+            --bg-primary: #F5F7FA;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #EEF2F7;
+            --accent-primary: #1E88E5;
+            --accent-hover: #1976D2;
+            --accent-light: #E3F2FD;
+            --text-primary: #212121;
+            --text-secondary: #616161;
+            --text-tertiary: #9E9E9E;
+            --text-muted: #BDBDBD;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --error: #F44336;
+            --info: #2196F3;
+            --purple: #9C27B0;
+            --border-primary: #E0E0E0;
+            --border-secondary: #EEEEEE;
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 20px;
+            --space-6: 24px;
+            --space-8: 32px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-primary);
+            padding: 0 var(--space-6);
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .header-title .logo {
+            width: 32px;
+            height: 32px;
+            background: var(--accent-primary);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .btn {
+            padding: var(--space-2) var(--space-4);
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            font-family: inherit;
+        }
+        
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-primary);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        
+        .btn-primary {
+            background: var(--accent-primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
+        
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background: #F57C00;
+        }
+        
+        .btn-purple {
+            background: var(--purple);
+            color: white;
+        }
+        
+        .btn-purple:hover {
+            background: #7B1FA2;
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: var(--space-6);
+        }
+        
+        .page-header {
+            margin-bottom: var(--space-6);
+        }
+        
+        .page-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-2);
+        }
+        
+        .page-header p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: 12px;
+            padding: var(--space-6);
+            margin-bottom: var(--space-5);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            margin-bottom: var(--space-5);
+        }
+        
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .card-icon.export {
+            background: #FFF8E1;
+        }
+        
+        .card-icon.import {
+            background: #F3E5F5;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .card-desc {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            margin-top: 2px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-tertiary);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: var(--space-3) 0;
+            display: none;
+        }
+        
+        .progress-bar.active {
+            display: block;
+        }
+        
+        .progress-bar .progress {
+            height: 100%;
+            background: var(--accent-primary);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        
+        .status-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: var(--space-2);
+            display: none;
+        }
+        
+        .status-text.active {
+            display: block;
+        }
+        
+        .status-text.success {
+            color: var(--success);
+        }
+        
+        .status-text.error {
+            color: var(--error);
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            margin: var(--space-4) 0;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .file-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-5);
+            border: 2px dashed var(--border-primary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--bg-tertiary);
+        }
+        
+        .file-label:hover {
+            border-color: var(--purple);
+            background: #F3E5F5;
+        }
+        
+        .file-label.has-file {
+            border-color: var(--success);
+            background: #E8F5E9;
+        }
+        
+        .file-label span {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .notice-card {
+            background: #FFF8E1;
+            border: 1px solid #FFE082;
+            border-radius: 8px;
+            padding: var(--space-5);
+        }
+        
+        .notice-card h3 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--warning);
+            margin-bottom: var(--space-3);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .notice-card ul {
+            margin: 0;
+            padding-left: var(--space-5);
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: var(--space-3);
+            margin-top: var(--space-4);
+        }
+        
+        .btn-group .btn {
+            flex: 1;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: var(--space-4);
+            }
+            
+            .card {
+                padding: var(--space-5);
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-title">
+            <div class="logo">📊</div>
+            数据管理
+        </div>
+        <div class="header-right">
+            <button class="btn btn-secondary" onclick="goBack()">返回菜单</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="page-header">
+            <h1 id="pageTitle">数据管理</h1>
+            <p id="pageDesc">导出或导入系统数据</p>
+        </div>
+        
+        <!-- 数据导出卡片 -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon export">📤</div>
+                <div>
+                    <div class="card-title">数据导出</div>
+                    <div class="card-desc">将所有用户和数据库数据导出为JSON备份文件</div>
+                </div>
+            </div>
+            
+            <button class="btn btn-warning" id="btnExport" onclick="exportData()" style="width: 100%;">
+                开始导出
+            </button>
+            
+            <div class="progress-bar" id="progressExport">
+                <div class="progress" style="width: 0%"></div>
+            </div>
+            
+            <div class="status-text" id="statusExport"></div>
+        </div>
+        
+        <!-- 数据导入卡片 -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon import">📥</div>
+                <div>
+                    <div class="card-title">数据导入</div>
+                    <div class="card-desc">从JSON备份文件恢复数据到系统数据库</div>
+                </div>
+            </div>
+            
+            <div class="file-input-wrapper">
+                <input type="file" id="fileInput" class="file-input" accept=".json" onchange="handleFileSelect(event)">
+                <label for="fileInput" class="file-label" id="fileLabel">
+                    <span>📁 点击选择备份文件 (.json)</span>
+                </label>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="document.getElementById('fileInput').click()">
+                    选择文件
+                </button>
+                <button class="btn btn-purple" id="btnImport" onclick="importData()" disabled>
+                    开始导入
+                </button>
+            </div>
+            
+            <div class="progress-bar" id="progressImport">
+                <div class="progress" style="width: 0%"></div>
+            </div>
+            
+            <div class="status-text" id="statusImport"></div>
+        </div>
+        
+        <!-- 注意事项 -->
+        <div class="notice-card">
+            <h3>⚠️ 注意事项</h3>
+            <ul>
+                <li>导出操作会将所有数据库表数据导出为JSON文件</li>
+                <li>导入操作会向数据库中插入或更新数据</li>
+                <li>导入前建议先执行一次导出备份</li>
+                <li>导入操作不可撤销，请谨慎操作</li>
+                <li>仅管理员可执行数据导入导出操作</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        const token = localStorage.getItem('token');
+        const role = localStorage.getItem('role');
+        
+        if (!token) {
+            window.location.href = '/login';
+        }
+        
+        if (role !== 'admin') {
+            alert('权限不足，仅管理员可访问此页面');
+            window.location.href = '/menu';
+        }
+        
+        // 根据URL参数设置页面标题
+        const urlParams = new URLSearchParams(window.location.search);
+        const mode = urlParams.get('mode');
+        if (mode === 'export') {
+            document.getElementById('pageTitle').textContent = '数据导出';
+            document.getElementById('pageDesc').textContent = '将系统数据导出为备份文件';
+        } else if (mode === 'import') {
+            document.getElementById('pageTitle').textContent = '数据导入';
+            document.getElementById('pageDesc').textContent = '从备份文件恢复数据';
+        }
+        
+        let selectedFile = null;
+        
+        function goBack() {
+            window.location.href = '/menu';
+        }
+        
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (!file.name.endsWith('.json')) {
+                    alert('请选择JSON格式的备份文件');
+                    return;
+                }
+                selectedFile = file;
+                const fileLabel = document.getElementById('fileLabel');
+                fileLabel.classList.add('has-file');
+                fileLabel.innerHTML = '<span>📄 ' + file.name + '</span>';
+                document.getElementById('btnImport').disabled = false;
+            }
+        }
+        
+        async function exportData() {
+            const btn = document.getElementById('btnExport');
+            const progress = document.getElementById('progressExport');
+            const status = document.getElementById('statusExport');
+            
+            if (!confirm('确定要导出所有数据库数据吗？\n导出过程可能需要一些时间。')) {
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.textContent = '正在导出...';
+            progress.classList.add('active');
+            status.classList.add('active');
+            status.classList.remove('success', 'error');
+            status.textContent = '正在导出数据，请稍候...';
+            
+            try {
+                const response = await fetch('/api/admin/data/export', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': token
+                    }
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || '导出失败');
+                }
+                
+                // 获取文件名
+                const contentDisposition = response.headers.get('Content-Disposition');
+                let filename = 'full_backup.json';
+                if (contentDisposition) {
+                    const match = contentDisposition.match(/filename="?([^"]+)"?/);
+                    if (match) filename = match[1];
+                }
+                
+                // 下载文件
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+                progress.querySelector('.progress').style.width = '100%';
+                status.classList.add('success');
+                status.textContent = '✓ 导出成功！文件已下载: ' + filename;
+                btn.textContent = '导出完成';
+                
+            } catch (error) {
+                status.classList.add('error');
+                status.textContent = '✗ 导出失败: ' + error.message;
+                btn.textContent = '重新导出';
+                btn.disabled = false;
+            }
+        }
+        
+        async function importData() {
+            const btn = document.getElementById('btnImport');
+            const progress = document.getElementById('progressImport');
+            const status = document.getElementById('statusImport');
+            
+            if (!selectedFile) {
+                alert('请先选择备份文件');
+                return;
+            }
+            
+            if (!confirm('确定要导入数据吗？\n\n导入操作将向数据库中插入或更新数据，此操作不可撤销！\n\n建议在导入前先执行一次数据导出备份。')) {
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.textContent = '正在导入...';
+            progress.classList.add('active');
+            status.classList.add('active');
+            status.classList.remove('success', 'error');
+            status.textContent = '正在导入数据，请稍候...';
+            
+            try {
+                const formData = new FormData();
+                formData.append('file', selectedFile);
+                formData.append('mode', 'merge');
+                
+                const response = await fetch('/api/admin/data/import', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': token
+                    },
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (!response.ok || !result.success) {
+                    throw new Error(result.error || '导入失败');
+                }
+                
+                progress.querySelector('.progress').style.width = '100%';
+                status.classList.add('success');
+                status.textContent = '✓ ' + result.message;
+                btn.textContent = '导入完成';
+                
+            } catch (error) {
+                status.classList.add('error');
+                status.textContent = '✗ 导入失败: ' + error.message;
+                btn.textContent = '重新导入';
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

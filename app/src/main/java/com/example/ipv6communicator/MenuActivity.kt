@@ -2,6 +2,7 @@ package com.example.ipv6communicator
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -17,10 +18,13 @@ class MenuActivity : AppCompatActivity() {
 
     private lateinit var tvWelcome: TextView
     private lateinit var btnLogout: MaterialButton
+    private lateinit var cardDataExport: androidx.cardview.widget.CardView
+    private lateinit var cardDataImport: androidx.cardview.widget.CardView
 
     private val client = OkHttpClient()
     private var token: String = ""
     private var username: String = ""
+    private var role: String = ""
     private val baseUrl = "http://yaohu.dynv6.net:32996"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,22 +34,32 @@ class MenuActivity : AppCompatActivity() {
         initViews()
         loadUserInfo()
         setupClickListeners()
-        
-        // 检查APP更新
+
         UpdateChecker.checkForUpdate(this)
     }
 
     private fun initViews() {
         tvWelcome = findViewById(R.id.tvWelcome)
         btnLogout = findViewById(R.id.btnLogout)
+        cardDataExport = findViewById(R.id.cardDataExport)
+        cardDataImport = findViewById(R.id.cardDataImport)
     }
 
     private fun loadUserInfo() {
         val sharedPref = getSharedPreferences("salary_system", MODE_PRIVATE)
         token = sharedPref.getString("token", "") ?: ""
         username = sharedPref.getString("username", "") ?: ""
+        role = sharedPref.getString("role", "") ?: ""
 
         tvWelcome.text = "欢迎，$username"
+
+        if (role == "admin") {
+            cardDataExport.visibility = View.VISIBLE
+            cardDataImport.visibility = View.VISIBLE
+        } else {
+            cardDataExport.visibility = View.GONE
+            cardDataImport.visibility = View.GONE
+        }
     }
 
     private fun setupClickListeners() {
@@ -59,6 +73,16 @@ class MenuActivity : AppCompatActivity() {
         cardLeave.setOnClickListener {
             vibrate()
             goToLeave()
+        }
+
+        cardDataExport.setOnClickListener {
+            vibrate()
+            goToDataManage("export")
+        }
+
+        cardDataImport.setOnClickListener {
+            vibrate()
+            goToDataManage("import")
         }
 
         btnLogout.setOnClickListener {
@@ -88,6 +112,12 @@ class MenuActivity : AppCompatActivity() {
 
     private fun goToLeave() {
         val intent = Intent(this, LeaveActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun goToDataManage(mode: String) {
+        val intent = Intent(this, DataManageActivity::class.java)
+        intent.putExtra("mode", mode)
         startActivity(intent)
     }
 

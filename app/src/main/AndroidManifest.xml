@@ -49,6 +49,11 @@
             android:name=".LeaveActivity"
             android:exported="false"
             android:theme="@style/Theme.IPv6Communicator" />
+
+        <activity
+            android:name=".DataManageActivity"
+            android:exported="false"
+            android:theme="@style/Theme.IPv6Communicator" />
     </application>
 
 </manifest>

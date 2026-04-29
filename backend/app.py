@@ -12,6 +12,7 @@ import os
 import sys
 import json
 import base64
+import io
 import threading
 import uuid
 from datetime import datetime
@@ -182,6 +183,12 @@ def customer_archive_page():
 def app_update_page():
     """APP更新管理页面"""
     return render_template('app_update.html')
+
+
+@app.route('/data-manage')
+def data_manage_page():
+    """数据导入导出管理页面"""
+    return render_template('data_manage.html')
 
 
 # ========================================
@@ -4439,6 +4446,201 @@ def delete_app_version():
             'message': 'APK已删除'
         })
         
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/admin/data/export', methods=['GET'])
+@admin_required
+def export_all_data():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name")
+        tables = [row['name'] for row in cursor.fetchall()]
+
+        export_data = {
+            'export_time': datetime.now().isoformat(),
+            'export_version': '1.0',
+            'tables': {}
+        }
+
+        for table in tables:
+            cursor.execute(f"SELECT * FROM {table}")
+            rows = cursor.fetchall()
+            columns = [description[0] for description in cursor.description]
+
+            table_rows = []
+            for row in rows:
+                row_dict = {}
+                for col in columns:
+                    value = row[col]
+                    if value is not None:
+                        if isinstance(value, bytes):
+                            import base64
+                            row_dict[col] = base64.b64encode(value).decode('utf-8')
+                            row_dict[col + '_base64'] = True
+                        else:
+                            row_dict[col] = value
+                    else:
+                        row_dict[col] = None
+                table_rows.append(row_dict)
+
+            export_data['tables'][table] = {
+                'columns': columns,
+                'rows': table_rows,
+                'count': len(table_rows)
+            }
+
+        conn.close()
+
+        json_str = json.dumps(export_data, ensure_ascii=False, indent=2, default=str)
+
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        filename = f"full_backup_{timestamp}.json"
+
+        return send_file(
+            io.BytesIO(json_str.encode('utf-8')),
+            as_attachment=True,
+            download_name=filename,
+            mimetype='application/json'
+        )
+
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/admin/data/import', methods=['POST'])
+@admin_required
+def import_all_data():
+    try:
+        if 'file' not in request.files:
+            return jsonify({'success': False, 'error': '未找到上传文件'}), 400
+
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({'success': False, 'error': '未选择文件'}), 400
+
+        if not file.filename.endswith('.json'):
+            return jsonify({'success': False, 'error': '仅支持JSON格式文件'}), 400
+
+        import_mode = request.form.get('mode', 'merge')
+
+        content = file.read().decode('utf-8')
+        import_data = json.loads(content)
+
+        if 'tables' not in import_data:
+            return jsonify({'success': False, 'error': '无效的备份文件格式'}), 400
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        results = {}
+        total_imported = 0
+        total_errors = 0
+
+        for table_name, table_data in import_data['tables'].items():
+            try:
+                cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name=?", (table_name,))
+                if not cursor.fetchone():
+                    results[table_name] = {'status': 'skipped', 'reason': '表不存在'}
+                    continue
+
+                rows = table_data.get('rows', [])
+                columns = table_data.get('columns', [])
+
+                if not rows:
+                    results[table_name] = {'status': 'skipped', 'reason': '无数据', 'count': 0}
+                    continue
+
+                imported = 0
+                errors = 0
+
+                for row in rows:
+                    try:
+                        filtered_cols = []
+                        filtered_vals = []
+                        for col in columns:
+                            if col in row:
+                                val = row[col]
+                                if row.get(col + '_base64') and val:
+                                    import base64
+                                    val = base64.b64decode(val)
+                                filtered_cols.append(col)
+                                filtered_vals.append(val)
+
+                        if import_mode == 'replace':
+                            cursor.execute(f"DELETE FROM {table_name}")
+
+                        placeholders = ', '.join(['?' for _ in filtered_cols])
+                        col_names = ', '.join(filtered_cols)
+
+                        try:
+                            cursor.execute(
+                                f"INSERT OR REPLACE INTO {table_name} ({col_names}) VALUES ({placeholders})",
+                                filtered_vals
+                            )
+                            imported += 1
+                        except Exception as insert_err:
+                            try:
+                                update_parts = [f"{col} = ?" for col in filtered_cols if col != 'id']
+                                update_vals = [val for col, val in zip(filtered_cols, filtered_vals) if col != 'id']
+                                if update_parts and 'id' in row and row['id']:
+                                    id_val = row['id']
+                                    update_vals.append(id_val)
+                                    cursor.execute(
+                                        f"UPDATE {table_name} SET {', '.join(update_parts)} WHERE id = ?",
+                                        update_vals
+                                    )
+                                    if cursor.rowcount > 0:
+                                        imported += 1
+                                    else:
+                                        raise Exception("UPDATE affected 0 rows")
+                                else:
+                                    raise insert_err
+                            except Exception:
+                                try:
+                                    non_id_cols = [c for c in filtered_cols if c != 'id']
+                                    non_id_vals = [v for c, v in zip(filtered_cols, filtered_vals) if c != 'id']
+                                    if non_id_cols:
+                                        placeholders2 = ', '.join(['?' for _ in non_id_cols])
+                                        cursor.execute(
+                                            f"INSERT INTO {table_name} ({', '.join(non_id_cols)}) VALUES ({placeholders2})",
+                                            non_id_vals
+                                        )
+                                        imported += 1
+                                except Exception as e3:
+                                    errors += 1
+
+                    except Exception as e:
+                        errors += 1
+
+                conn.commit()
+                total_imported += imported
+                total_errors += errors
+                results[table_name] = {
+                    'status': 'completed',
+                    'imported': imported,
+                    'errors': errors
+                }
+
+            except Exception as e:
+                results[table_name] = {'status': 'error', 'error': str(e)}
+                total_errors += 1
+
+        conn.close()
+
+        return jsonify({
+            'success': True,
+            'message': f'导入完成: 成功 {total_imported} 条, 失败 {total_errors} 条',
+            'total_imported': total_imported,
+            'total_errors': total_errors,
+            'details': results
+        })
+
+    except json.JSONDecodeError:
+        return jsonify({'success': False, 'error': 'JSON文件格式错误'}), 400
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 
