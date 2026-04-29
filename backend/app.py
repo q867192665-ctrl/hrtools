@@ -2464,6 +2464,78 @@ def delete_user_by_post():
         }), 500
 
 
+@app.route('/api/admin/users/batch-delete', methods=['POST'])
+@admin_required
+def batch_delete_users():
+    """
+    批量删除用户（管理员）
+    
+    Request Body:
+    {
+        "usernames": ["用户名1", "用户名2", ...]
+    }
+    """
+    try:
+        data = request.get_json()
+        usernames = data.get('usernames', [])
+        
+        if not usernames or not isinstance(usernames, list):
+            return jsonify({
+                'success': False,
+                'error': '请提供要删除的用户名列表'
+            }), 400
+        
+        if 'admin' in usernames:
+            return jsonify({
+                'success': False,
+                'error': '不能删除admin账户'
+            }), 400
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        deleted_count = 0
+        failed_users = []
+        
+        for username in usernames:
+            username = username.strip()
+            if not username:
+                continue
+            
+            cursor.execute("SELECT 姓名 FROM users WHERE 姓名 = ?", (username,))
+            if not cursor.fetchone():
+                failed_users.append(f"{username}(不存在)")
+                continue
+            
+            try:
+                cursor.execute("DELETE FROM signature_files WHERE 用户姓名 = ?", (username,))
+                cursor.execute("DELETE FROM summary_table WHERE 姓名 = ?", (username,))
+                cursor.execute("DELETE FROM users WHERE 姓名 = ?", (username,))
+                deleted_count += 1
+            except Exception as e:
+                failed_users.append(f"{username}({str(e)})")
+        
+        conn.commit()
+        conn.close()
+        
+        message = f'成功删除 {deleted_count} 个用户'
+        if failed_users:
+            message += f'，失败 {len(failed_users)} 个'
+        
+        return jsonify({
+            'success': True,
+            'message': message,
+            'deleted_count': deleted_count,
+            'failed_users': failed_users
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': f'批量删除用户失败: {str(e)}'
+        }), 500
+
+
 @app.route('/api/admin/users/reset-password', methods=['POST'])
 @admin_required
 def reset_user_password():

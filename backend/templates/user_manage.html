@@ -145,6 +145,32 @@
             font-size: 12px;
         }
         
+        .checkbox-cell {
+            width: 40px;
+            text-align: center;
+        }
+        
+        .checkbox-cell input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+        
+        .batch-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3);
+            background: var(--accent-light);
+            border-radius: 4px;
+        }
+        
+        .batch-actions .selected-count {
+            font-size: 14px;
+            color: var(--accent-primary);
+            font-weight: 500;
+        }
+        
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -414,8 +440,14 @@
                 <div class="actions-bar">
                     <button class="btn btn-primary" onclick="showAddUserModal()">添加用户</button>
                     <button class="btn btn-success" onclick="showBatchImportModal()">批量导入</button>
+                    <button class="btn btn-danger" id="batchDeleteBtn" onclick="batchDeleteUsers()" style="display: none;">批量删除</button>
                     <button class="btn btn-secondary" onclick="loadUserList()">刷新</button>
                     <input type="text" class="search-box" id="searchInput" placeholder="搜索用户..." onkeyup="searchUsers()">
+                    <div class="batch-actions" id="batchActions" style="display: none;">
+                        <span class="selected-count">已选择 <span id="selectedCount">0</span> 人</span>
+                        <button class="btn btn-sm btn-secondary" onclick="selectAllUsers()">全选</button>
+                        <button class="btn btn-sm btn-secondary" onclick="deselectAllUsers()">取消全选</button>
+                    </div>
                 </div>
             </div>
             <div class="card-body">
@@ -423,6 +455,7 @@
                     <table>
                         <thead>
                             <tr>
+                                <th class="checkbox-cell"><input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll()"></th>
                                 <th>姓名</th>
                                 <th>手机号</th>
                                 <th>部门</th>
@@ -569,7 +602,116 @@
         
         loadUserList();
         
+        let selectedUsers = new Set();
+        
+        function updateBatchActions() {
+            const count = selectedUsers.size;
+            const batchActions = document.getElementById('batchActions');
+            const batchDeleteBtn = document.getElementById('batchDeleteBtn');
+            const selectedCountSpan = document.getElementById('selectedCount');
+            
+            if (count > 0) {
+                batchActions.style.display = 'flex';
+                batchDeleteBtn.style.display = 'inline-block';
+                selectedCountSpan.textContent = count;
+            } else {
+                batchActions.style.display = 'none';
+                batchDeleteBtn.style.display = 'none';
+            }
+        }
+        
+        function toggleSelectAll() {
+            const checkbox = document.getElementById('selectAllCheckbox');
+            const checkboxes = document.querySelectorAll('.user-checkbox');
+            
+            checkboxes.forEach(cb => {
+                cb.checked = checkbox.checked;
+                const username = cb.dataset.username;
+                if (checkbox.checked) {
+                    selectedUsers.add(username);
+                } else {
+                    selectedUsers.delete(username);
+                }
+            });
+            
+            updateBatchActions();
+        }
+        
+        function toggleUserCheckbox(username) {
+            if (selectedUsers.has(username)) {
+                selectedUsers.delete(username);
+            } else {
+                selectedUsers.add(username);
+            }
+            updateBatchActions();
+            
+            const checkboxes = document.querySelectorAll('.user-checkbox');
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            document.getElementById('selectAllCheckbox').checked = allChecked;
+        }
+        
+        function selectAllUsers() {
+            const checkboxes = document.querySelectorAll('.user-checkbox');
+            checkboxes.forEach(cb => {
+                cb.checked = true;
+                selectedUsers.add(cb.dataset.username);
+            });
+            document.getElementById('selectAllCheckbox').checked = true;
+            updateBatchActions();
+        }
+        
+        function deselectAllUsers() {
+            const checkboxes = document.querySelectorAll('.user-checkbox');
+            checkboxes.forEach(cb => {
+                cb.checked = false;
+            });
+            selectedUsers.clear();
+            document.getElementById('selectAllCheckbox').checked = false;
+            updateBatchActions();
+        }
+        
+        async function batchDeleteUsers() {
+            if (selectedUsers.size === 0) {
+                alert('请先选择要删除的用户');
+                return;
+            }
+            
+            const userList = Array.from(selectedUsers);
+            if (userList.includes('admin')) {
+                alert('不能删除管理员账号 admin');
+                return;
+            }
+            
+            if (!confirm(`确定要删除选中的 ${userList.length} 个用户吗？\n\n删除的用户：${userList.join('、')}\n\n此操作不可撤销！`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/admin/users/batch-delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    },
+                    body: JSON.stringify({ usernames: userList })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(data.message);
+                    selectedUsers.clear();
+                    loadUserList();
+                } else {
+                    alert('删除失败: ' + data.error);
+                }
+            } catch (error) {
+                alert('删除失败: ' + error.message);
+            }
+        }
+        
         async function loadUserList() {
+            selectedUsers.clear();
+            updateBatchActions();
             try {
                 const response = await fetch('/api/admin/users', {
                     headers: { 'Authorization': token }
@@ -581,13 +723,15 @@
                     tbody.innerHTML = '';
                     
                     if (data.data.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="7" class="empty-message">暂无用户数据</td></tr>';
+                        tbody.innerHTML = '<tr><td colspan="8" class="empty-message">暂无用户数据</td></tr>';
                         return;
                     }
                     
                     data.data.forEach(user => {
                         const row = document.createElement('tr');
+                        const isAdmin = user.姓名 === 'admin';
                         row.innerHTML = `
+                            <td class="checkbox-cell"><input type="checkbox" class="user-checkbox" data-username="${user.姓名}" ${isAdmin ? 'disabled' : ''} onchange="toggleUserCheckbox('${user.姓名}')"></td>
                             <td>${user.姓名}</td>
                             <td>${user.手机号 || '-'}</td>
                             <td>${user.部门 || '-'}</td>
@@ -597,7 +741,7 @@
                             <td>
                                 <button class="btn btn-sm btn-primary" onclick="showProfileModal('${user.姓名}', '${user.手机号 || ''}', '${user.部门 || ''}')">修改信息</button>
                                 <button class="btn btn-sm btn-warning" onclick="showPasswordModal('${user.姓名}')">修改密码</button>
-                                ${user.姓名 !== 'admin' ? `<button class="btn btn-sm btn-danger" onclick="deleteUser('${user.姓名}')">删除</button>` : ''}
+                                ${!isAdmin ? `<button class="btn btn-sm btn-danger" onclick="deleteUser('${user.姓名}')">删除</button>` : ''}
                             </td>
                         `;
                         tbody.appendChild(row);
@@ -605,7 +749,7 @@
                 }
             } catch (error) {
                 console.error('加载用户列表失败:', error);
-                document.getElementById('userTableBody').innerHTML = '<tr><td colspan="7" class="empty-message">加载失败</td></tr>';
+                document.getElementById('userTableBody').innerHTML = '<tr><td colspan="8" class="empty-message">加载失败</td></tr>';
             }
         }
         
