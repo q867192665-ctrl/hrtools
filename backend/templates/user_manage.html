@@ -594,11 +594,20 @@
         
         if (!token || role !== 'admin') {
             window.location.href = '/menu';
-        } else {
+        }
+        
+        function initPage() {
             if (username) {
                 document.getElementById('welcomeText').textContent = '欢迎，' + username;
             }
             loadUserList();
+            document.getElementById('excelFileInput').addEventListener('change', handleFileSelect);
+        }
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initPage);
+        } else {
+            initPage();
         }
         
         let selectedUsers = new Set();
@@ -931,10 +940,6 @@
         function closeBatchImportModal() {
             document.getElementById('batchImportModal').style.display = 'none';
         }
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('excelFileInput').addEventListener('change', handleFileSelect);
-        });
         
         async function handleFileSelect(event) {
             const file = event.target.files[0];
