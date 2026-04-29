@@ -149,7 +149,7 @@ class DataManageActivity : AppCompatActivity() {
                     return@withContext ExportResult(success = false, error = "响应为空")
                 }
 
-                val contentDisposition = response.header("Content-Disposition", "")
+                val contentDisposition = response.header("Content-Disposition") ?: ""
                 var fileName = "full_backup.json"
                 if (contentDisposition.contains("filename=")) {
                     fileName = contentDisposition.substringAfter("filename=").replace("\"", "").trim()
