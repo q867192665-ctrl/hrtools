@@ -341,16 +341,10 @@
                     <p>上传最新APK、版本管理、更新推送</p>
                 </div>
                 
-                <div class="menu-card data-export" onclick="goToDataExport()">
-                    <div class="card-icon" style="background:#FFF8E1;">📤</div>
-                    <h3>数据导出</h3>
-                    <p>导出全部用户和数据库数据备份</p>
-                </div>
-                
-                <div class="menu-card data-import" onclick="goToDataImport()">
-                    <div class="card-icon" style="background:#F3E5F5;">📥</div>
-                    <h3>数据导入</h3>
-                    <p>从备份文件恢复系统数据</p>
+                <div class="menu-card data-backup" onclick="goToDataBackup()">
+                    <div class="card-icon" style="background:#FFF8E1;">💾</div>
+                    <h3>数据备份</h3>
+                    <p>数据导出与导入、系统备份恢复</p>
                 </div>
             </div>
         </div>
@@ -407,12 +401,8 @@
             window.location.href = '/app-update';
         }
         
-        function goToDataExport() {
-            window.location.href = '/data-manage?mode=export';
-        }
-        
-        function goToDataImport() {
-            window.location.href = '/data-manage?mode=import';
+        function goToDataBackup() {
+            window.location.href = '/data-manage';
         }
         
         async function logout() {
