@@ -707,12 +707,28 @@
             togglePassword.textContent = secretVisible ? '\u{1F441}\u{FE0F}' : '\u{1F441}';
         });
 
+        // Load saved credentials on page load
+        const savedUsername = localStorage.getItem('saved_username');
+        const savedPassword = localStorage.getItem('saved_password');
+        const savedRemember = localStorage.getItem('saved_remember');
+        
+        if (savedRemember === 'true') {
+            if (savedUsername) {
+                usernameInput.value = savedUsername;
+            }
+            if (savedPassword) {
+                passwordInput.value = savedPassword;
+            }
+            document.getElementById('remember').checked = true;
+        }
+
         // Login form
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
             const username = usernameInput.value;
             const password = passwordInput.value;
+            const remember = document.getElementById('remember').checked;
             const errorMsg = document.getElementById('errorMsg');
             const loginBtn = document.getElementById('loginBtn');
 
@@ -735,6 +751,17 @@
                 const data = await response.json();
 
                 if (data.success) {
+                    // Save or clear credentials based on remember checkbox
+                    if (remember) {
+                        localStorage.setItem('saved_username', username);
+                        localStorage.setItem('saved_password', password);
+                        localStorage.setItem('saved_remember', 'true');
+                    } else {
+                        localStorage.removeItem('saved_username');
+                        localStorage.removeItem('saved_password');
+                        localStorage.removeItem('saved_remember');
+                    }
+                    
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('username', username);
                     localStorage.setItem('role', data.role);
