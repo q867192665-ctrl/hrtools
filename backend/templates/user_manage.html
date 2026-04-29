@@ -594,13 +594,12 @@
         
         if (!token || role !== 'admin') {
             window.location.href = '/menu';
+        } else {
+            if (username) {
+                document.getElementById('welcomeText').textContent = '欢迎，' + username;
+            }
+            loadUserList();
         }
-        
-        if (username) {
-            document.getElementById('welcomeText').textContent = '欢迎，' + username;
-        }
-        
-        loadUserList();
         
         let selectedUsers = new Set();
         
@@ -622,7 +621,7 @@
         
         function toggleSelectAll() {
             const checkbox = document.getElementById('selectAllCheckbox');
-            const checkboxes = document.querySelectorAll('.user-checkbox');
+            const checkboxes = document.querySelectorAll('.user-checkbox:not(:disabled)');
             
             checkboxes.forEach(cb => {
                 cb.checked = checkbox.checked;
@@ -651,12 +650,14 @@
         }
         
         function selectAllUsers() {
-            const checkboxes = document.querySelectorAll('.user-checkbox');
+            const checkboxes = document.querySelectorAll('.user-checkbox:not(:disabled)');
             checkboxes.forEach(cb => {
                 cb.checked = true;
                 selectedUsers.add(cb.dataset.username);
             });
-            document.getElementById('selectAllCheckbox').checked = true;
+            const allCheckboxes = document.querySelectorAll('.user-checkbox');
+            const allChecked = allCheckboxes.length === checkboxes.length;
+            document.getElementById('selectAllCheckbox').checked = allChecked;
             updateBatchActions();
         }
         
