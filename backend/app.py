@@ -2829,7 +2829,7 @@ def submit_leave():
         cursor.execute(
             """INSERT INTO leave_records 
                (姓名, 请假类型, 开始日期, 结束日期, 请假天数, 请假原因, 申请时间)
-               VALUES (?, ?, ?, ?, ?, ?, datetime('now'))""",
+               VALUES (?, ?, ?, ?, ?, ?, datetime('now', 'localtime'))""",
             (request.user_name, leave_type, start_date, end_date, leave_days, reason)
         )
         
