@@ -4333,8 +4333,8 @@ def upload_app_version():
         cursor.execute("UPDATE app_versions SET is_active = 0")
         
         cursor.execute('''
-            INSERT INTO app_versions (version, version_name, file_name, file_path, file_size, update_note, is_active)
-            VALUES (?, ?, ?, ?, ?, ?, 1)
+            INSERT INTO app_versions (version, version_name, file_name, file_path, file_size, update_note, upload_time, is_active)
+            VALUES (?, ?, ?, ?, ?, ?, datetime('now', 'localtime'), 1)
         ''', (version, version, file_name, file_path, file_size, update_note))
         
         cursor.execute('''
